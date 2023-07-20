@@ -29,12 +29,9 @@
             <tbody>
                 {% for paper in papers %}
                 <tr>
-                    <td id="title">{{ paper.title }}</td>
-                    <td id="author">{{ paper.author }}</td>
-                    <td id="abstract">{{ paper.abst }}</td>
-                    <td id="year">{{ paper.year }}</td>
-                    <td id="journal">{{ paper.conference }}</th>
-                    <td id="quote_count">{{ paper.quote_count }}</th>
+                    {% for k, v in paper.items() %}
+                    <td id="{{ k }}">{{ v }}</td>
+                    {% endfor %}
                 </tr>
                 {% endfor %}
             </tbody>
