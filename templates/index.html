@@ -11,51 +11,22 @@
                     <th colspan="5">情報工学分野の研究者が読むべき論文一覧</th>
                 </tr>
                 <tr>
-                    <th colspan="1">タイトル</th>
-                    <th colspan="1">著者名</th>
-                    <th colspan="1">アブスト</th>
-                    <th colspan="1">出版年</th>
-                    <th colspan="1">ジャーナル・カンファレンス</th>
-                    <th colspan="1">被引用数</th>
+                    {% for key in keys %}
+                    <th colspan="1">{{key}}</th>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
+                {% for paper in papers %}
                 <tr>
-                    <td id="title">ImageNet Classification with Deep Convolutional Neural Networks</td>
-                    <td id="author">A Krizhevsky et al.</td>
-                    <td id="abstract">We trained a large, deep convolutional neural network to classify the 1.2 million
-                        high-resolution images in the ImageNet LSVRC-2010 contest into the 1000 different classes. On the test data, we achieved top-1 and top-5 error rates of 37.5%
-                        and 17.0% which is considerably better than the previous state-of-the-art. The
-                        neural network, which has 60 million parameters and 650,000 neurons, consists
-                        of five convolutional layers, some of which are followed by max-pooling layers,
-                        and three fully-connected layers with a final 1000-way softmax. To make training faster, we used non-saturating neurons and a very efficient GPU implementation of the convolution operation. To reduce overfitting in the fully-connected
-                        layers we employed a recently-developed regularization method called “dropout”
-                        that proved to be very effective. We also entered a variant of this model in the
-                        ILSVRC-2012 competition and achieved a winning top-5 test error rate of 15.3%,
-                        compared to 26.2% achieved by the second-best entry.
-                        </td>
-                    <td id="year">2012</td>
-                    <td id="journal">NIPS 2012</th>
-                    <td id="quote_count">118896</th>
+                    <td id="title">{{ paper.title }}</td>
+                    <td id="author">{{ paper.author }}</td>
+                    <td id="abstract">{{ paper.abst }}</td>
+                    <td id="year">{{ paper.year }}</td>
+                    <td id="journal">{{ paper.conference }}</th>
+                    <td id="quote_count">{{ paper.quote_count }}</th>
                 </tr>
-                <tr>
-                    <td id="title">ImageNet Classification with Deep Convolutional Neural Networks</td>
-                    <td id="author">A Krizhevsky et al.</td>
-                    <td id="abstract">We trained a large, deep convolutional neural network to classify the 1.2 million
-                        high-resolution images in the ImageNet LSVRC-2010 contest into the 1000 different classes. On the test data, we achieved top-1 and top-5 error rates of 37.5%
-                        and 17.0% which is considerably better than the previous state-of-the-art. The
-                        neural network, which has 60 million parameters and 650,000 neurons, consists
-                        of five convolutional layers, some of which are followed by max-pooling layers,
-                        and three fully-connected layers with a final 1000-way softmax. To make training faster, we used non-saturating neurons and a very efficient GPU implementation of the convolution operation. To reduce overfitting in the fully-connected
-                        layers we employed a recently-developed regularization method called “dropout”
-                        that proved to be very effective. We also entered a variant of this model in the
-                        ILSVRC-2012 competition and achieved a winning top-5 test error rate of 15.3%,
-                        compared to 26.2% achieved by the second-best entry.
-                        </td>
-                    <td id="year">2012</td>
-                    <td id="journal">NIPS 2012</th>
-                    <td id="quote_count">118896</th>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </body>
