@@ -1,15 +1,16 @@
 from flask import Flask, render_template, request
 from data.papers import get_papers_data
-
+from data.call_meta_paper import PaperCaller
 
 app = Flask(__name__)
+pc = PaperCaller()
 
 @app.route('/', methods=["GET", "POST"])
 def index():
     if request.method == 'POST':
         keyword = request.form["keyword"]
         # APIにキーワードと表示する論文数を渡す
-        papers_data = get_papers_data(keyword)
+        papers_data = pc.get_metainfo_from_title(keyword,100,5)
         print(keyword)
 
         if len(papers_data) != 0:  
