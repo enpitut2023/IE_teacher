@@ -13,7 +13,8 @@ def index():
         print(keyword)
 
         if len(papers_data) != 0:  
-            return render_template('index.html', papers=papers_data, keys=papers_data[0].keys())
+            keys = papers_data[0].keys()
+            return render_template('index.html', n=len(keys), papers=papers_data, keys=keys)
     
     return render_template('index.html')
 
