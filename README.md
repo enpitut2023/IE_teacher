@@ -1,7 +1,7 @@
 # IE_teacher
 
 ## 環境
-Python 3.8.6
+Python 3.10.8
 
 ## 使い方
 ```
