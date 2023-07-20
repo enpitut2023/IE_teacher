@@ -8,23 +8,17 @@ class PaperCaller:
     def empty_rdata(self):
         return [{"title":"error","abstract":"may_be_error","citationCount":-1}]
 
-    def get_metainfo_from_title(self,name_of_paper,num_get,num_extract)->dict:
-        def check_num_get_ext(num_get,num_extract):
-            if num_get>100:
-                return False
-            elif num_extract>num_get:
-                return False
-            else:
-                return True
-        
+    def get_metainfo_from_title(self,name_of_paper,num_get,num_extract)->dict:        
         def check_too_many_requests(r_dict):
             if "message" in r_dict.keys():
                 return False
             else:
                 return True
         
-        if check_num_get_ext(num_get,num_extract)==False:
-            return self.empty_rdata()
+        if num_get>100:
+            num_get=100
+        if num_get<num_extract:#
+            num_extract=num_get
 
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
         keyword = name_of_paper
@@ -43,6 +37,8 @@ class PaperCaller:
         
         total = r_dict['total']   
         data = r_dict['data']
+        if len(data)<num_extract:#
+            num_extract=len(data)
         data=self.sort_metainfo(data)
         return data[0:num_extract]
     
@@ -85,7 +81,7 @@ class PaperCaller:
 """
 #usage
 pc=PaperCaller()
-data=pc.get_metainfo_from_title('python',70,10)
+data=pc.get_metainfo_from_title('python',1000,50)
 for dt in data:
     print(dt['citationCount'])
 """
