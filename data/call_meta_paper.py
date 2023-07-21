@@ -22,8 +22,7 @@ class PaperCaller:
 
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
         keyword = name_of_paper
-        fields = ('title', 'year', 'referenceCount', 'citationCount',
-            'influentialCitationCount', 'isOpenAccess', 'fieldsOfStudy', 'authors',"abstract")
+        fields = ('title', 'year', 'citationCount','authors',"abstract")
         params = {
             'query': keyword,
             'fields': ','.join(fields),
@@ -40,6 +39,8 @@ class PaperCaller:
         if len(data)<num_extract:#
             num_extract=len(data)
         data=self.sort_metainfo(data)
+        for dt in data:
+            dt.pop("paperId")
         return data[0:num_extract]
     
     def sort_metainfo(self,list_dict):
