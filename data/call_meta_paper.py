@@ -14,9 +14,9 @@ class PaperCaller:
                 return False
             else:
                 return True
-        
-        if num_get>100:
-            num_get=100
+        num_get_max=100
+        if num_get>num_get_max:
+            num_get=num_get_max
         if num_get<num_extract:#
             num_extract=num_get
 
@@ -51,7 +51,7 @@ class PaperCaller:
         for dt in reference_data:
             dt.pop("paperId")
             dt.pop("importance")
-        return reference_data[0:num_extract]
+        return main_paper,reference_data[0:num_extract]
     
     
     def sort_metainfo(self,list_dict):
@@ -203,5 +203,5 @@ for dt in data:
 if __name__ == "__main__":
     pc=PaperCaller()
     data=pc.get_metainfo_from_title('Deep Learning in Neural Networks: An Overview',1000,50)
-    """"
+    """
 

@@ -11,7 +11,8 @@ def index():
   if request.method == 'POST':
     keyword = request.form["keyword"]
     # APIにキーワードと表示する論文数を渡す
-    main_paper, papers_data = pc.get_metainfo_from_title(keyword, 100, 5)
+    num_get=1000
+    main_paper, papers_data = pc.get_metainfo_from_title(keyword, num_get, 5)
 
     if len(papers_data) != 0:
       keys = papers_data[0].keys()
