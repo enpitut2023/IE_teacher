@@ -34,17 +34,25 @@ class PaperCaller:
         if check_too_many_requests(r_dict)==False:
             return self.empty_rdata()
         
-        total = r_dict['total']   
         data = r_dict['data']
-        if len(data)<num_extract:#
-            num_extract=len(data)
-        self.extract_names(data)
-        self.culcurate_importance(data,0.5)
-        data=self.sort_metainfo_by_importance(data)
-        for dt in data:
+        reference_data = []
+        main_paper = self.get_main_paper(keyword, data)
+        main_paper_id = main_paper.pop("paperId")
+        if main_paper_id == -1:
+            return reference_data
+        else:
+            reference_data = self.get_main_paper_reference_dict(main_paper_id)
+            #api
+        if len(reference_data)<num_extract:#
+            num_extract=len(reference_data)
+        self.extract_names(reference_data)
+        self.culcurate_importance(reference_data,0.5)
+        reference_data=self.sort_metainfo_by_importance(reference_data)
+        for dt in reference_data:
             dt.pop("paperId")
             dt.pop("importance")
-        return data[0:num_extract]
+        return reference_data[0:num_extract]
+    
     
     def sort_metainfo(self,list_dict):
         list_dict_sorted = sorted(list_dict,
@@ -119,6 +127,7 @@ class PaperCaller:
 
         
 
+    '''
     def get_metainfo_from_title_legacy(self,name_of_paper,num_paper)->dict:
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
         keyword = name_of_paper
@@ -136,7 +145,35 @@ class PaperCaller:
         print(f'Total search result: {total}')
         
         data = r_dict['data']
-        return data    
+        return data
+    '''
+    
+    def get_main_paper(self, title, data):
+        title = title.replace(" ", "").lower()
+        for paper in data:
+            if title == paper["title"].replace(" ", "").lower():
+                return paper
+        
+        # Not Found
+        return -1
+    
+    def get_main_paper_reference_dict(self, paperID):
+        endpoint = 'https://api.semanticscholar.org/graph/v1/paper/{}/references'.format(paperID)
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract")
+        params = {
+            'fields': ','.join(fields),
+            "limit": 1000
+        }
+        r = requests.get(url=endpoint, params=params)
+
+        r_dict = json.loads(r.text)["data"]
+
+        result = []
+        for paper in r_dict:
+            result.append(paper["citedPaper"])
+
+        return result
+        
 
     """
         for d in data:
@@ -148,8 +185,10 @@ class PaperCaller:
                     print(f'{fi}: {d[fi]}')
     """
 
+    """
 
 #usage
+
 keyword = input("Please input keywords ")
 pc=PaperCaller()
 data=pc.get_metainfo_from_title(keyword,100,100)
@@ -159,4 +198,10 @@ for dt in data:
     
 
 
+
+
+if __name__ == "__main__":
+    pc=PaperCaller()
+    data=pc.get_metainfo_from_title('Deep Learning in Neural Networks: An Overview',1000,50)
+    """"
 
