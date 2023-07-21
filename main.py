@@ -11,7 +11,8 @@ def index():
   if request.method == 'POST':
     keyword = request.form["keyword"]
     # APIにキーワードと表示する論文数を渡す
-    main_paper, papers_data = pc.get_metainfo_from_title(keyword, 100, 5)
+    papers_data = pc.get_metainfo_from_title(keyword, 100, 5)
+    print(keyword)
 
     if len(papers_data) != 0:
       keys = papers_data[0].keys()
@@ -28,5 +29,5 @@ Replit上でhtmlを表示する場合はhost="0.0.0.0",port=81を
 使用する
 """
 if __name__ == "__main__":
-  # app.run(debug=False, host="0.0.0.0", port=81)
-  app.run(debug=False, host='localhost')
+  app.run(debug=False, host="0.0.0.0", port=81)
+  #app.run(debug=False, host='localhost')
