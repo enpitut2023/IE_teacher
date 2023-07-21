@@ -113,6 +113,8 @@ class PaperCaller:
                     string += author['name']
                 else:
                     string += ", " + author['name']
+            if not string:
+                string = None
             dt['authors'] = string
 
         
@@ -146,13 +148,15 @@ class PaperCaller:
                     print(f'{fi}: {d[fi]}')
     """
 
-"""
+
 #usage
 keyword = input("Please input keywords ")
 pc=PaperCaller()
-data=pc.get_metainfo_from_title(keyword,50,50)
+data=pc.get_metainfo_from_title(keyword,100,100)
 for dt in data:
-    print(dt['importance'])
-"""
+    if not dt['authors']:
+        print(dt['authors'])
+    
+
 
 
