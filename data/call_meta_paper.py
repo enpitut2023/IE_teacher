@@ -38,16 +38,33 @@ class PaperCaller:
         data = r_dict['data']
         if len(data)<num_extract:#
             num_extract=len(data)
+        self.extract_names(data)
         data=self.sort_metainfo(data)
         for dt in data:
             dt.pop("paperId")
         return data[0:num_extract]
     
     def sort_metainfo(self,list_dict):
-        list_dict
+        #list_dict
         list_dict_sorted = sorted(list_dict,
                                    key=lambda x:x['citationCount'],reverse=True)
         return list_dict_sorted
+
+    """
+    論文データの著者名をStringに変換
+    """
+    def extract_names(self, list_dict):
+        for dt in list_dict:
+            authors = dt['authors']
+            string = ""
+            for index, author in enumerate(authors):
+                if (index == 0):
+                    string += author['name']
+                else:
+                    string += ", " + author['name']
+            dt['authors'] = string
+
+        
 
     def get_metainfo_from_title_legacy(self,name_of_paper,num_paper)->dict:
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
@@ -68,7 +85,6 @@ class PaperCaller:
         data = r_dict['data']
         return data    
 
-
     """
         for d in data:
             print('---------------')
@@ -82,7 +98,9 @@ class PaperCaller:
 """
 #usage
 pc=PaperCaller()
-data=pc.get_metainfo_from_title('python',1000,50)
+data=pc.get_metainfo_from_title('C',1,1)
 for dt in data:
-    print(dt['citationCount'])
+    print(dt['authors'])
+
 """
+
