@@ -43,6 +43,7 @@ class PaperCaller:
         data=self.sort_metainfo_by_importance(data)
         for dt in data:
             dt.pop("paperId")
+            dt.pop("importance")
         return data[0:num_extract]
     
     def sort_metainfo(self,list_dict):
