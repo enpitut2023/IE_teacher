@@ -10,7 +10,7 @@ pc = PaperCaller()
 def index():
   if request.method == 'POST':
     keyword = request.form["keyword"]
-    # APIにキーワードと表示する論文数を渡す
+    # APIに入力キーワードと表示する論文数を渡す
     num_get=1000
     main_paper, papers_data = pc.get_metainfo_from_title(keyword, num_get, 5)
 
