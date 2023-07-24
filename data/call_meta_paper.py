@@ -5,6 +5,7 @@ https://api.semanticscholar.org/api-docs/
 
 import requests
 import json
+from extract_by_rake import Rake_Keyword_Extractor
 
 class PaperCaller:
     def __init__(self):
@@ -226,8 +227,27 @@ class PaperCaller:
                 continue
             paperIDs.append(paper["citedPaper"]["paperId"])
             result.append(paper["citedPaper"])
-
+            
         return result, paperIDs
+    
+    def get_papers_from_rake(self,abst,num_get=100,num_keywords=5):
+        rake_ext=Rake_Keyword_Extractor()
+        keywords=rake_ext.get_keywords(abst,num_keywords)
+        ret=[]
+        #各keywordで検索。上位1件を追加。
+        for keyword in keywords:
+            endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
+            fields = ('title', 'year', 'citationCount','authors',"abstract")
+            params = {
+                'query': keyword,
+                'fields': ','.join(fields),
+                'limit': num_get
+            }
+            r = requests.get(url=endpoint, params=params)
+            r_dict = json.loads(r.text)
+            data = r_dict['data']
+            ret=ret+data[0:num_get]
+        return ret
     
     def get_paper_data_tldr(self, paperIDs):
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
@@ -286,5 +306,3 @@ if __name__ == "__main__":
     pc=PaperCaller()
     input_txt = input("keyを入力:")
     data=pc.get_metainfo_from_title(input_txt,1000,50)
-
-

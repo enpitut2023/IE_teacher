@@ -34,5 +34,12 @@ https://ieteacher-2--miura-code.repl.co/
 ## 使い方
 ```
 pip install -r requirements.txt
-python main.py
+```
+```
+python app.py
+```
+
+```
+python -c "import nltk; nltk.download('stopwords')"
+python -c "import nltk; nltk.download('punk')"
 ```
