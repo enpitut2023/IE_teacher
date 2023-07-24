@@ -11,7 +11,7 @@ class PaperCaller:
         pass
 
     def empty_rdata(self):
-        return [{"title":"error","abstract":"may_be_error","citationCount":-1}]
+        return {"title":"error","abstract":"may_be_error","citationCount":-1}, [{"title":"error","abstract":"may_be_error","citationCount":-1}]
     
     def get_metainfo_from_title(self,name_of_paper,num_get,num_extract)->dict:
         """ 
@@ -22,13 +22,14 @@ class PaperCaller:
             num_extract(int):検索結果から抽出する論文数
         Return:
             main_paper(dict):入力論文に関するメタデータ
-            reference_data(list<-dict):入力論文の参考文献メタデータのリスト、ソートされている
+            data(list<-dict):入力論文の参考文献メタデータのリスト、ソートされている
         """
-        def check_too_many_requests(r_dict):
-            if "message" in r_dict.keys():
+        def check_api_result(r_dict):
+            if "message" in r_dict.keys() or "error" in r_dict.keys():
                 return False
-            else:
-                return True
+            if r_dict['total']==0:
+                return False
+            return True
             
         num_get_max = 100
         if num_get > num_get_max:
@@ -47,33 +48,32 @@ class PaperCaller:
         r = requests.get(url=endpoint, params=params)
         
         r_dict = json.loads(r.text)
-        if check_too_many_requests(r_dict)==False:
+        if check_api_result(r_dict)==False:
             return self.empty_rdata()
         
         data = r_dict['data']
-        reference_data = []
-        main_paper = self.get_main_paper(keyword, data)
-        main_paper_id = main_paper.pop("paperId")
-        
-        if main_paper_id == -1:
-            #入力論文が見つからない場合
-            return reference_data
-        else:
-            #入力論文が見つかる場合
-            reference_data = self.get_main_paper_reference_dict(main_paper_id)
 
-        if len(reference_data) < num_extract:
-            num_extract = len(reference_data)
+        if self.keyword_or_title(keyword, data):
+            # タイトルが入力された場合
+            main_paper = self.get_main_paper(keyword, data)
+            main_paper_id = main_paper.pop("paperId")
+            data = self.get_main_paper_reference_dict(main_paper_id)
+        else:
+            main_paper = []
+
+
+        if len(data) < num_extract:
+            num_extract = len(data)
             
-        self.extract_names(reference_data)
-        self.culcurate_importance(reference_data, 0.5)
-        reference_data = self.sort_metainfo_by_importance(reference_data)
+        self.extract_names(data)
+        self.culcurate_importance(data, 0.5)
+        data = self.sort_metainfo_by_importance(data)
         
-        for dt in reference_data:
+        for dt in data:
             dt.pop("paperId")
             dt.pop("importance")
             
-        return main_paper, reference_data[0:num_extract]
+        return main_paper, data[0:num_extract]
     
     def sort_metainfo(self, list_dict):
         """ 
@@ -181,10 +181,17 @@ class PaperCaller:
         title = title.replace(" ", "").lower()
         for paper in list_dict:
             if title == paper["title"].replace(" ", "").lower():
-                return paper
+                break
+        return paper
+    
+    def keyword_or_title(self, title, list_dict):
+        title = title.replace(" ", "").lower()
+        for paper in list_dict:
+            if title == paper["title"].replace(" ", "").lower():
+                return True
         
         # Not Found
-        return -1
+        return False
     
     def get_main_paper_reference_dict(self, paperID):
         """ 
