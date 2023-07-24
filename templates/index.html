@@ -16,26 +16,5 @@
                 </div>
             </div>
         </form>
-        <table>
-            <thead>
-                <tr>
-                    <th colspan="{{ n }}">おすすめの論文一覧</th>
-                </tr>
-                <tr>
-                    {% for key in keys %}
-                    <th colspan="1">{{ key }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for paper in papers %}
-                <tr>
-                    {% for k, v in paper.items() %}
-                    <td id="{{ k }}">{{ v }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </body>
 </html>
