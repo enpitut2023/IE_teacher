@@ -10,3 +10,8 @@ pip install -r requirements.txt
 ```
 python app.py
 ```
+
+```
+python -c "import nltk; nltk.download('stopwords')"
+python -c "import nltk; nltk.download('punk')"
+```
