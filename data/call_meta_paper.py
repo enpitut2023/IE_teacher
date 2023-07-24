@@ -5,7 +5,6 @@ https://api.semanticscholar.org/api-docs/
 
 import requests
 import json
-import numpy as np
 
 from pysummarization.nlp_base import NlpBase
 from pysummarization.nlpbase.auto_abstractor import AutoAbstractor
@@ -13,7 +12,7 @@ from pysummarization.tokenizabledoc.mecab_tokenizer import MeCabTokenizer
 from pysummarization.tokenizabledoc.simple_tokenizer import SimpleTokenizer
 from pysummarization.abstractabledoc.top_n_rank_abstractor import TopNRankAbstractor
 from pysummarization.similarityfilter.tfidf_cosine import TfIdfCosine
-similarity_limit = 0.25
+similarity_limit = 0.5
 
 class PaperCaller:
     def __init__(self):
@@ -258,11 +257,14 @@ class PaperCaller:
             # 文書の要約を実行
             result_dict = auto_abstractor.summarize(document, abstractable_doc, similarity_filter)
             
-            #print(len(result_dict['summarize_result']))
-            dt['re_abstract'] = ""
+            #dt['re_abstract'] = ""
+            dt['abstract'] = ""
+            print(len(result_dict['summarize_result']))
+            input()
             for sentence in result_dict['summarize_result']:
                 print(sentence)
-                dt['re_abstract'] += sentence
+                dt['abstract'] += sentence
+                #dt['re_abstract'] += sentence
                 
 if __name__ == "__main__":
     pc=PaperCaller()
