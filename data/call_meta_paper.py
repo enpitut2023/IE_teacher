@@ -5,6 +5,15 @@ https://api.semanticscholar.org/api-docs/
 
 import requests
 import json
+import numpy as np
+
+from pysummarization.nlp_base import NlpBase
+from pysummarization.nlpbase.auto_abstractor import AutoAbstractor
+from pysummarization.tokenizabledoc.mecab_tokenizer import MeCabTokenizer
+from pysummarization.tokenizabledoc.simple_tokenizer import SimpleTokenizer
+from pysummarization.abstractabledoc.top_n_rank_abstractor import TopNRankAbstractor
+from pysummarization.similarityfilter.tfidf_cosine import TfIdfCosine
+similarity_limit = 0.25
 
 class PaperCaller:
     def __init__(self):
@@ -61,13 +70,15 @@ class PaperCaller:
         else:
             main_paper = []
 
-
         if len(data) < num_extract:
             num_extract = len(data)
             
         self.extract_names(data)
         self.culcurate_importance(data, 0.5)
         data = self.sort_metainfo_by_importance(data)
+        
+        #abstractを要約する
+        self.summarize_abstract(data[0:num_extract])
         
         for dt in data:
             dt.pop("paperId")
@@ -217,8 +228,45 @@ class PaperCaller:
 
         return result
 
+    def summarize_abstract(self, list_dict):
+        """ Abstractを要約する """
+        # NLPオブジェクト
+        nlp_base = NlpBase()
+        # トークナイザー設定
+        nlp_base.tokenizable_doc = SimpleTokenizer()
+        # 類似性フィルター
+        similarity_filter = TfIdfCosine()
+        # NLPオブジェクト設定
+        similarity_filter.nlp_base = nlp_base
+        # 類似性limit：limit超える文は切り捨て
+        similarity_filter.similarity_limit = similarity_limit
+
+        # Object of automatic summarization.
+        auto_abstractor = AutoAbstractor()
+        # Set tokenizer.
+        auto_abstractor.tokenizable_doc = SimpleTokenizer()
+        # Set delimiter for making a list of sentence.
+        auto_abstractor.delimiter_list = [".", "\n"]
+        # Object of abstracting and filtering document.
+        abstractable_doc = TopNRankAbstractor()
+        
+        for dt in  list_dict:
+            document = dt['abstract']
+            if document == None:
+                continue
+            
+            # 文書の要約を実行
+            result_dict = auto_abstractor.summarize(document, abstractable_doc, similarity_filter)
+            
+            #print(len(result_dict['summarize_result']))
+            dt['re_abstract'] = ""
+            for sentence in result_dict['summarize_result']:
+                print(sentence)
+                dt['re_abstract'] += sentence
+                
 if __name__ == "__main__":
     pc=PaperCaller()
-    data=pc.get_metainfo_from_title('Deep Learning in Neural Networks: An Overview',1000,50)
+    input_txt = input("keyを入力:")
+    data=pc.get_metainfo_from_title(input_txt,1000,50)
 
 
