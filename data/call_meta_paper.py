@@ -12,7 +12,7 @@ from pysummarization.tokenizabledoc.mecab_tokenizer import MeCabTokenizer
 from pysummarization.tokenizabledoc.simple_tokenizer import SimpleTokenizer
 from pysummarization.abstractabledoc.top_n_rank_abstractor import TopNRankAbstractor
 from pysummarization.similarityfilter.tfidf_cosine import TfIdfCosine
-similarity_limit = 0.5
+similarity_limit = 0.1
 
 class PaperCaller:
     def __init__(self):
@@ -47,7 +47,7 @@ class PaperCaller:
 
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
         keyword = name_of_paper
-        fields = ('title', 'year', 'citationCount','authors',"abstract")
+        fields = ('title', 'year', 'citationCount','authors',"abstract", "tldr")
         params = {
             'query': keyword,
             'fields': ','.join(fields),
@@ -212,6 +212,7 @@ class PaperCaller:
             result(list<-dict):参考文献のメタデータ
         """
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/{}/references'.format(paperID)
+        #fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
         fields = ('title', 'year', 'citationCount', 'authors', "abstract")
         params = {
             'fields': ','.join(fields),
@@ -232,7 +233,7 @@ class PaperCaller:
         # NLPオブジェクト
         nlp_base = NlpBase()
         # トークナイザー設定
-        nlp_base.tokenizable_doc = SimpleTokenizer()
+        nlp_base.tokenizable_doc = MeCabTokenizer()
         # 類似性フィルター
         similarity_filter = TfIdfCosine()
         # NLPオブジェクト設定
@@ -259,9 +260,7 @@ class PaperCaller:
             
             #dt['re_abstract'] = ""
             dt['abstract'] = ""
-            print(len(result_dict['summarize_result']))
-            input()
-            for sentence in result_dict['summarize_result']:
+            for sentence in result_dict['summarize_result'][0:5]:
                 print(sentence)
                 dt['abstract'] += sentence
                 #dt['re_abstract'] += sentence
