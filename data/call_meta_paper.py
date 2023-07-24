@@ -5,7 +5,7 @@ https://api.semanticscholar.org/api-docs/
 
 import requests
 import json
-from extract_by_rake import Rake_Keyword_Extractor
+from data.extract_by_rake import Rake_Keyword_Extractor
 
 class PaperCaller:
     def __init__(self):
@@ -56,19 +56,25 @@ class PaperCaller:
         if self.keyword_or_title(keyword, data):
             # タイトルが入力された場合
             main_paper = self.get_main_paper(keyword, data)
+            if main_paper["abstract"] == None:
+                return self.empty_rdata() 
+
             main_paper_id = main_paper.pop("paperId")
-            data, paperIDs = self.get_main_paper_reference_dict(main_paper_id)
-            data = self.get_paper_data_tldr(paperIDs)
+            data = self.get_main_paper_reference_dict(main_paper_id)
+            data += self.get_papers_from_rake(main_paper["abstract"])
         else:
             main_paper = []
 
         if len(data) < num_extract:
             num_extract = len(data)
-            
-        self.extract_names(data)
-        self.extract_tldr(data)
+
         self.culcurate_importance(data, 0.5)
         data = self.sort_metainfo_by_importance(data)
+        paperIds = self.extract_paperIds(data)
+        data = self.get_paper_data_tldr(paperIds[:num_extract])
+
+        self.extract_names(data)
+        self.extract_tldr(data)
         
         for dt in data:
             dt.pop("paperId")
@@ -177,6 +183,15 @@ class PaperCaller:
                 tldr = dt["tldr"]["text"]
                 dt["tldr"] = tldr
 
+    def extract_paperIds(self, list_dict):
+        paperIDs = []
+        for paper in list_dict:
+            if paper["paperId"] == None:
+                continue
+            paperIDs.append(paper["paperId"])
+
+        return paperIDs
+
     def get_main_paper(self, title, list_dict):
         """ 
         論文メタデータの中から、入力論文タイトルを探す。
@@ -221,26 +236,22 @@ class PaperCaller:
         r_dict = json.loads(r.text)["data"]
         
         result = []
-        paperIDs = []
         for paper in r_dict:
-            if paper["citedPaper"]["paperId"] == None:
-                continue
-            paperIDs.append(paper["citedPaper"]["paperId"])
             result.append(paper["citedPaper"])
             
-        return result, paperIDs
+        return result
     
     def get_papers_from_rake(self,abst,num_get=100,num_keywords=5):
         rake_ext=Rake_Keyword_Extractor()
         keywords=rake_ext.get_keywords(abst,num_keywords)
+        print(keywords)
         ret=[]
         #各keywordで検索。上位1件を追加。
         for keyword in keywords:
             endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
-            fields = ('title', 'year', 'citationCount','authors',"abstract")
             params = {
                 'query': keyword,
-                'fields': ','.join(fields),
+                'fields': ','.join(self.fields),
                 'limit': num_get
             }
             r = requests.get(url=endpoint, params=params)

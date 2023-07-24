@@ -41,5 +41,5 @@ python app.py
 
 ```
 python -c "import nltk; nltk.download('stopwords')"
-python -c "import nltk; nltk.download('punk')"
+python -c "import nltk; nltk.download('punkt')"
 ```
