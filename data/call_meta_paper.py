@@ -8,7 +8,7 @@ import json
 
 class PaperCaller:
     def __init__(self):
-        pass
+        self.fields = ('title', 'year', 'citationCount','authors',"abstract", "tldr")
 
     def empty_rdata(self):
         return {"title":"error","abstract":"may_be_error","citationCount":-1}, [{"title":"error","abstract":"may_be_error","citationCount":-1}]
@@ -39,10 +39,9 @@ class PaperCaller:
 
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
         keyword = name_of_paper
-        fields = ('title', 'year', 'citationCount','authors',"abstract")
         params = {
             'query': keyword,
-            'fields': ','.join(fields),
+            'fields': ','.join(self.fields),
             'limit': num_get
         }
         r = requests.get(url=endpoint, params=params)
@@ -57,21 +56,23 @@ class PaperCaller:
             # タイトルが入力された場合
             main_paper = self.get_main_paper(keyword, data)
             main_paper_id = main_paper.pop("paperId")
-            data = self.get_main_paper_reference_dict(main_paper_id)
+            data, paperIDs = self.get_main_paper_reference_dict(main_paper_id)
+            data = self.get_paper_data_tldr(paperIDs)
         else:
             main_paper = []
-
 
         if len(data) < num_extract:
             num_extract = len(data)
             
         self.extract_names(data)
+        self.extract_tldr(data)
         self.culcurate_importance(data, 0.5)
         data = self.sort_metainfo_by_importance(data)
         
         for dt in data:
             dt.pop("paperId")
-            dt.pop("importance")
+            dt.pop("abstract")
+            dt.pop("authors")
             
         return main_paper, data[0:num_extract]
     
@@ -169,6 +170,12 @@ class PaperCaller:
                 string = None
             dt['authors'] = string
 
+    def extract_tldr(self, list_dict):
+        for dt in list_dict:
+            if dt["tldr"] != None:
+                tldr = dt["tldr"]["text"]
+                dt["tldr"] = tldr
+
     def get_main_paper(self, title, list_dict):
         """ 
         論文メタデータの中から、入力論文タイトルを探す。
@@ -202,6 +209,7 @@ class PaperCaller:
             result(list<-dict):参考文献のメタデータ
         """
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/{}/references'.format(paperID)
+        #fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
         fields = ('title', 'year', 'citationCount', 'authors', "abstract")
         params = {
             'fields': ','.join(fields),
@@ -212,13 +220,71 @@ class PaperCaller:
         r_dict = json.loads(r.text)["data"]
         
         result = []
+        paperIDs = []
         for paper in r_dict:
+            if paper["citedPaper"]["paperId"] == None:
+                continue
+            paperIDs.append(paper["citedPaper"]["paperId"])
             result.append(paper["citedPaper"])
 
-        return result
+        return result, paperIDs
+    
+    def get_paper_data_tldr(self, paperIDs):
+        endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
 
+        params = {
+            "fields": ','.join(fields)
+        }
+
+        r = requests.post(endpoint, params=params, json={"ids": paperIDs})
+        r = '{"data": ' + r.text[:-1] + "}"
+        r_dict = json.loads(r)["data"]
+
+        return r_dict
+    
+    """
+    def summarize_abstract(self, list_dict):
+        # Abstractを要約する
+        # NLPオブジェクト
+        nlp_base = NlpBase()
+        # トークナイザー設定
+        nlp_base.tokenizable_doc = MeCabTokenizer()
+        # 類似性フィルター
+        similarity_filter = TfIdfCosine()
+        # NLPオブジェクト設定
+        similarity_filter.nlp_base = nlp_base
+        # 類似性limit：limit超える文は切り捨て
+        similarity_filter.similarity_limit = similarity_limit
+
+        # Object of automatic summarization.
+        auto_abstractor = AutoAbstractor()
+        # Set tokenizer.
+        auto_abstractor.tokenizable_doc = SimpleTokenizer()
+        # Set delimiter for making a list of sentence.
+        auto_abstractor.delimiter_list = [".", "\n"]
+        # Object of abstracting and filtering document.
+        abstractable_doc = TopNRankAbstractor()
+        
+        for dt in  list_dict:
+            document = dt['abstract']
+            if document == None:
+                continue
+            
+            # 文書の要約を実行
+            result_dict = auto_abstractor.summarize(document, abstractable_doc, similarity_filter)
+            
+            #dt['re_abstract'] = ""
+            dt['abstract'] = ""
+            for sentence in result_dict['summarize_result'][0:5]:
+                print(sentence)
+                dt['abstract'] += sentence
+                #dt['re_abstract'] += sentence
+    """
+                
 if __name__ == "__main__":
     pc=PaperCaller()
-    data=pc.get_metainfo_from_title('Deep Learning in Neural Networks: An Overview',1000,50)
+    input_txt = input("keyを入力:")
+    data=pc.get_metainfo_from_title(input_txt,1000,50)
 
 
