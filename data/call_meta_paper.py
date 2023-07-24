@@ -6,17 +6,9 @@ https://api.semanticscholar.org/api-docs/
 import requests
 import json
 
-from pysummarization.nlp_base import NlpBase
-from pysummarization.nlpbase.auto_abstractor import AutoAbstractor
-from pysummarization.tokenizabledoc.mecab_tokenizer import MeCabTokenizer
-from pysummarization.tokenizabledoc.simple_tokenizer import SimpleTokenizer
-from pysummarization.abstractabledoc.top_n_rank_abstractor import TopNRankAbstractor
-from pysummarization.similarityfilter.tfidf_cosine import TfIdfCosine
-similarity_limit = 0.1
-
 class PaperCaller:
     def __init__(self):
-        pass
+        self.fields = ('title', 'year', 'citationCount','authors',"abstract", "tldr")
 
     def empty_rdata(self):
         return {"title":"error","abstract":"may_be_error","citationCount":-1}, [{"title":"error","abstract":"may_be_error","citationCount":-1}]
@@ -47,10 +39,9 @@ class PaperCaller:
 
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
         keyword = name_of_paper
-        fields = ('title', 'year', 'citationCount','authors',"abstract", "tldr")
         params = {
             'query': keyword,
-            'fields': ','.join(fields),
+            'fields': ','.join(self.fields),
             'limit': num_get
         }
         r = requests.get(url=endpoint, params=params)
@@ -65,7 +56,8 @@ class PaperCaller:
             # タイトルが入力された場合
             main_paper = self.get_main_paper(keyword, data)
             main_paper_id = main_paper.pop("paperId")
-            data = self.get_main_paper_reference_dict(main_paper_id)
+            data, paperIDs = self.get_main_paper_reference_dict(main_paper_id)
+            data = self.get_paper_data_tldr(paperIDs)
         else:
             main_paper = []
 
@@ -73,15 +65,14 @@ class PaperCaller:
             num_extract = len(data)
             
         self.extract_names(data)
+        self.extract_tldr(data)
         self.culcurate_importance(data, 0.5)
         data = self.sort_metainfo_by_importance(data)
         
-        #abstractを要約する
-        self.summarize_abstract(data[0:num_extract])
-        
         for dt in data:
             dt.pop("paperId")
-            dt.pop("importance")
+            dt.pop("abstract")
+            dt.pop("authors")
             
         return main_paper, data[0:num_extract]
     
@@ -179,6 +170,12 @@ class PaperCaller:
                 string = None
             dt['authors'] = string
 
+    def extract_tldr(self, list_dict):
+        for dt in list_dict:
+            if dt["tldr"] != None:
+                tldr = dt["tldr"]["text"]
+                dt["tldr"] = tldr
+
     def get_main_paper(self, title, list_dict):
         """ 
         論文メタデータの中から、入力論文タイトルを探す。
@@ -223,13 +220,32 @@ class PaperCaller:
         r_dict = json.loads(r.text)["data"]
         
         result = []
+        paperIDs = []
         for paper in r_dict:
+            if paper["citedPaper"]["paperId"] == None:
+                continue
+            paperIDs.append(paper["citedPaper"]["paperId"])
             result.append(paper["citedPaper"])
 
-        return result
+        return result, paperIDs
+    
+    def get_paper_data_tldr(self, paperIDs):
+        endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
 
+        params = {
+            "fields": ','.join(fields)
+        }
+
+        r = requests.post(endpoint, params=params, json={"ids": paperIDs})
+        r = '{"data": ' + r.text[:-1] + "}"
+        r_dict = json.loads(r)["data"]
+
+        return r_dict
+    
+    """
     def summarize_abstract(self, list_dict):
-        """ Abstractを要約する """
+        # Abstractを要約する
         # NLPオブジェクト
         nlp_base = NlpBase()
         # トークナイザー設定
@@ -264,6 +280,7 @@ class PaperCaller:
                 print(sentence)
                 dt['abstract'] += sentence
                 #dt['re_abstract'] += sentence
+    """
                 
 if __name__ == "__main__":
     pc=PaperCaller()
