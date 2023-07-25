@@ -8,51 +8,55 @@
         <meta charset="utf-8"/>
     </head>
     <body>
-        <div class="header-container">
-            <a class="header-img" href="{{ url_for('index') }}">
-                <img src="\static\figures\header_logo.jpg" alt="情報工学先生">
-            </a>
-            <form class="form-inline" method="post">
-                <div class="form-group">
-                    <label class="sr-only" for="screen_name"></label>
-                    <div class="input-group mb-3">
-                        <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
-                        <input type="submit"  value="&#xf002">
+        <header>
+            <div class="header-container">
+                <a class="header-img" href="{{ url_for('index') }}">
+                    <img src="\static\figures\header_logo.jpg" alt="情報工学先生">
+                </a>
+                <form class="form-inline" method="post">
+                    <div class="form-group">
+                        <label class="sr-only" for="screen_name"></label>
+                        <div class="input-group mb-3">
+                            <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
+                            <input type="submit"  value="&#xf002">
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
+                </form>
+            </div>
+        </header>
 
-        <table>
-            <thead>
-                <tr>
-                    <th colspan="{{ 4 }}">おすすめの論文一覧</th>
-                </tr>
-                <tr>
-                    <th colspan="1">title</th>
-                    <th colspan="1">tldr</th>
-                    <th colspan="1">year</th>
-                    <th colspan="1">citationCount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for paper in papers %}
-                <tr>
-                    <td>
-                        <a href='{{ url_for("papers", paperId=paper["paperId"]) }}'>{{ paper["title"] }}</a>
-                    </td>
-                    <td>
-                        {{ paper["tldr"] }}
-                    </td>
-                    <td>
-                        {{ paper["year"] }}
-                    </td>
-                    <td>
-                        {{ paper["citationCount"] }}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="root_content">
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="{{ 4 }}">参考文献一覧</th>
+                    </tr>
+                    <tr>
+                        <th colspan="1">title</th>
+                        <th colspan="1">tldr</th>
+                        <th colspan="1">year</th>
+                        <th colspan="1">citationCount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paper in papers %}
+                    <tr>
+                        <td>
+                            <a href='{{ url_for("papers", paperId=paper["paperId"]) }}'>{{ paper["title"] }}</a>
+                        </td>
+                        <td>
+                            {{ paper["tldr"] }}
+                        </td>
+                        <td>
+                            {{ paper["year"] }}
+                        </td>
+                        <td>
+                            {{ paper["citationCount"] }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </body>
 </html>
