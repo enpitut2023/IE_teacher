@@ -24,8 +24,14 @@ def index():
 @app.route("/root/<string:keyword>", methods=["GET", "POST"])
 def root(keyword):
   if request.method == 'POST':
-    paperId = request.form["paperId"]
-    redirect(url_for("papers" , paperId = paperId))
+    if "keyword" in request.form.keys():
+      keyword = request.form["keyword"]
+
+      return redirect(url_for("root" , keyword = keyword))
+    
+    elif "paperId" in request.form.keys():
+      paperId = request.form["paperId"]
+      return redirect(url_for("papers" , paperId = paperId))
 
   num_get=1000
   papers_data = pc.get_metainfo_from_keyword(keyword, num_get, num_get)
@@ -38,6 +44,11 @@ def root(keyword):
 
 @app.route("/papers/<string:paperId>", methods=["GET", "POST"])
 def papers(paperId):
+  if request.method == 'POST':
+    keyword = request.form["keyword"]
+
+    return redirect(url_for("root" , keyword = keyword))
+  
   num_get=1000
   paperIds=paperId.split('-')
   targ_paper=paperIds[-1]
