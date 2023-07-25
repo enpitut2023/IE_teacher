@@ -11,7 +11,7 @@ tfoot {
 
 .c-form-text {
     height: 2.4em;
-    width: 70%;
+    width: 200%;
     padding: 0 16px;
     border-radius: 4px;
     border: none;
@@ -45,3 +45,30 @@ input[type="submit"]{
 .input-group {
     align-content: center;
 }  
+
+header {
+    background-color: #333; /* ヘッダーの背景色を設定 */
+    color: #fff; /* テキストの色を設定 */
+    padding: 10px; /* ヘッダーの余白を設定 */
+    height: 10%;
+}
+
+/* Flexコンテナを作成して子要素を横に並べる */
+.container {
+    display: flex;
+    align-items: center; /* 垂直方向に中央寄せ */
+}
+
+.img{
+    width: 70%;
+    height: 70%;
+    margin-right: 0px;
+}
+
+.logo {
+    float: left; /* ロゴを左寄せにする */
+}
+
+.logo img {
+    height: 50px; /* ロゴの高さを設定 */
+}
