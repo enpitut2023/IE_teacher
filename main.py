@@ -51,18 +51,16 @@ def papers(paperId):
   
   num_get=1000
   paperIds=paperId.split('-')
-  print(paperIds)
   targ_paper=paperIds[-1]
   main_data, papers_data = pc.get_metainfo_from_paperId(targ_paper, num_get, num_get)
+
   if len(papers_data) != 0:
     keys = papers_data[0].keys()
     return render_template("papers.html", n=len(keys), main_paper=main_data, papers=papers_data, keys=keys,
                            paperIds=paperId)
   else:
-    if type(paperIds)!=type([]):
-      paperIds=[paperIds]
-    print(paperIds)
     papers_data = pc.get_metainfo_from_paperIds(paperIds)
+
     return render_template("result.html", papers=papers_data)
 
 

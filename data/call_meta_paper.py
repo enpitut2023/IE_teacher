@@ -83,11 +83,15 @@ class PaperCaller:
         data = self.get_main_paper_reference_dict(paperId)
         if len(data) == 0:
             return main_data[0], []
-
+        
         if len(data) < num_extract:
             num_extract = len(data)
 
         paperIds = self.extract_paperIds(data)
+        
+        if len(paperIds) == 0:
+            return main_data[0], []
+
         data = self.get_metainfo_from_paperIds(paperIds[:num_extract])
         self.culcurate_importance(data, 0)
         data = self.sort_metainfo_by_importance(data)
@@ -265,7 +269,11 @@ class PaperCaller:
     def extract_tldr(self, list_dict):
         for dt in list_dict:
             if dt["tldr"] != None:
-                tldr = dt["tldr"]["text"]
+                if type(dt["tldr"]) == type({}):
+                    tldr = dt["tldr"]["text"]
+                else:
+                    tldr = dt["tldr"]
+            
                 dt["tldr"] = tldr
 
     def extract_paperIds(self, list_dict):
@@ -357,10 +365,10 @@ class PaperCaller:
         r = requests.post(endpoint, params=params, json={"ids": paperIDs})
         r = '{"data": ' + r.text[:-1] + "}"
         r_dict = json.loads(r)["data"]
-        #print(r_dict)
-        #self.extract_tldr(r_dict)
+        self.extract_tldr(r_dict)
 
         return r_dict
+    
 if __name__ == "__main__":
     pc=PaperCaller()
     input_txt = input("keyを入力:")
