@@ -42,16 +42,12 @@ class PaperCaller:
         if len(data) < num_extract:
             num_extract = len(data)
 
-        self.culcurate_importance(data, 0)
-        data = self.sort_metainfo_by_importance(data)
-
         self.extract_names(data)
         self.extract_tldr(data)
         
         for dt in data:
             dt.pop("abstract")
             dt.pop("authors")
-            dt.pop("importance")
             
         return data[0:num_extract]
 
