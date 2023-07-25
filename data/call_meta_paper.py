@@ -5,7 +5,7 @@ https://api.semanticscholar.org/api-docs/
 
 import requests
 import json
-from extract_by_rake import Rake_Keyword_Extractor
+from data.extract_by_rake import Rake_Keyword_Extractor
 
 class PaperCaller:
     def __init__(self):
@@ -74,6 +74,7 @@ class PaperCaller:
             dt.pop("paperId")
             dt.pop("abstract")
             dt.pop("authors")
+            dt.pop("importance")
             
         return main_paper, data[0:num_extract]
     
@@ -262,45 +263,6 @@ class PaperCaller:
         r_dict = json.loads(r)["data"]
 
         return r_dict
-    
-    """
-    def summarize_abstract(self, list_dict):
-        # Abstractを要約する
-        # NLPオブジェクト
-        nlp_base = NlpBase()
-        # トークナイザー設定
-        nlp_base.tokenizable_doc = MeCabTokenizer()
-        # 類似性フィルター
-        similarity_filter = TfIdfCosine()
-        # NLPオブジェクト設定
-        similarity_filter.nlp_base = nlp_base
-        # 類似性limit：limit超える文は切り捨て
-        similarity_filter.similarity_limit = similarity_limit
-
-        # Object of automatic summarization.
-        auto_abstractor = AutoAbstractor()
-        # Set tokenizer.
-        auto_abstractor.tokenizable_doc = SimpleTokenizer()
-        # Set delimiter for making a list of sentence.
-        auto_abstractor.delimiter_list = [".", "\n"]
-        # Object of abstracting and filtering document.
-        abstractable_doc = TopNRankAbstractor()
-        
-        for dt in  list_dict:
-            document = dt['abstract']
-            if document == None:
-                continue
-            
-            # 文書の要約を実行
-            result_dict = auto_abstractor.summarize(document, abstractable_doc, similarity_filter)
-            
-            #dt['re_abstract'] = ""
-            dt['abstract'] = ""
-            for sentence in result_dict['summarize_result'][0:5]:
-                print(sentence)
-                dt['abstract'] += sentence
-                #dt['re_abstract'] += sentence
-    """
                 
 if __name__ == "__main__":
     pc=PaperCaller()
