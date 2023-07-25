@@ -58,8 +58,10 @@ def papers(paperId):
     keys = papers_data[0].keys()
     return render_template("papers.html", n=len(keys), main_paper=main_data, papers=papers_data, keys=keys,
                            paperIds=paperId)
-  
-  return render_template("notfound.html")
+  else:
+    paperIds = paperId.split('-')
+    papers_data = pc.get_metainfo_from_paperIds(paperIds)
+    return render_template("result.html", papers=papers_data)
 
 
 """

@@ -88,7 +88,7 @@ class PaperCaller:
             num_extract = len(data)
 
         paperIds = self.extract_paperIds(data)
-        data = self.get_paper_data_tldr(paperIds[:num_extract])
+        data = self.get_metainfo_from_paperIds(paperIds[:num_extract])
         self.culcurate_importance(data, 0)
         data = self.sort_metainfo_by_importance(data)
 
@@ -154,7 +154,7 @@ class PaperCaller:
         self.culcurate_importance(data, 0)
         data = self.sort_metainfo_by_importance(data)
         paperIds = self.extract_paperIds(data)
-        data = self.get_paper_data_tldr(paperIds[:num_extract])
+        data = self.get_metainfo_from_paperIds(paperIds[:num_extract])
         self.culcurate_importance(data, 0)
         data = self.sort_metainfo_by_importance(data)
 
@@ -346,7 +346,7 @@ class PaperCaller:
         return ret 
     """
     
-    def get_paper_data_tldr(self, paperIDs):
+    def get_metainfo_from_paperIds(self, paperIDs):
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
         fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
 
@@ -359,7 +359,6 @@ class PaperCaller:
         r_dict = json.loads(r)["data"]
 
         return r_dict
-                
 if __name__ == "__main__":
     pc=PaperCaller()
     input_txt = input("keyを入力:")
