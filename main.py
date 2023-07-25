@@ -66,8 +66,8 @@ def papers(paperId):
   else:
     papers_data = pc.get_metainfo_from_paperIds(paperIds)
 
-    #return render_template("result.html", papers=papers_data)
-    return render_template("result_nontable.html", papers=papers_data)
+    #return render_template("result_nontable.html", papers=papers_data)
+    return render_template("result.html", papers=papers_data)
 
 
 """
