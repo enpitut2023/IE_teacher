@@ -14,6 +14,96 @@ class PaperCaller:
     def empty_rdata(self):
         return {"title":"error","abstract":"may_be_error","citationCount":-1}, [{"title":"error","abstract":"may_be_error","citationCount":-1}]
     
+    def get_metainfo_from_keyword(self, keyword, num_get, num_extract)->dict:
+        def check_api_result(r_dict):
+            if "message" in r_dict.keys() or "error" in r_dict.keys():
+                return False
+            if r_dict['total']==0:
+                return False
+            return True
+        num_get_max = 100
+        if num_get > num_get_max:
+            num_get = num_get_max
+        if num_get < num_extract:
+            num_extract = num_get
+        endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
+        keyword = name_of_paper
+        params = {
+            'query': keyword,
+            'fields': ','.join(self.fields),
+            'limit': num_get
+        }
+        r = requests.get(url=endpoint, params=params)
+        r_dict = json.loads(r.text)
+        if check_api_result(r_dict)==False:
+            return self.empty_rdata()
+        data = r_dict['data']
+
+        if len(data) < num_extract:
+            num_extract = len(data)
+
+        self.culcurate_importance(data, 0)
+        data = self.sort_metainfo_by_importance(data)
+
+        self.extract_names(data)
+        self.extract_tldr(data)
+        
+        for dt in data:
+            dt.pop("abstract")
+            dt.pop("authors")
+            dt.pop("importance")
+            
+        return data[0:num_extract]
+
+    def get_metainfo_from_paperId(self, paperId, num_get, num_extract)->dict:
+        def check_api_result(r_dict):
+            if "message" in r_dict.keys() or "error" in r_dict.keys():
+                return False
+            if r_dict['total']==0:
+                return False
+            return True
+        num_get_max = 100
+        if num_get > num_get_max:
+            num_get = num_get_max
+        if num_get < num_extract:
+            num_extract = num_get
+        
+        endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
+
+        params = {
+            "fields": ','.join(fields)
+        }
+
+        r = requests.post(endpoint, params=params, json={"ids": paperId})
+        r = '{"data": ' + r.text[:-1] + "}"
+        r_dict = json.loads(r)["data"]
+
+        if check_api_result(r_dict)==False:
+            return []
+        
+        data = r_dict['data']
+        main_paper = data[0]
+        main_paper_id = main_paper["paperId"]
+        data = self.get_main_paper_reference_dict(main_paper_id)
+
+        if len(data) < num_extract:
+            num_extract = len(data)
+
+        paperIds = self.extract_paperIds(data)
+        data = self.get_paper_data_tldr(paperIds[:num_extract])
+        self.culcurate_importance(data, 0)
+        data = self.sort_metainfo_by_importance(data)
+
+        self.extract_names(data)
+        self.extract_tldr(data)
+        
+        for dt in data:
+            dt.pop("abstract")
+            dt.pop("authors")
+            
+        return main_paper, data[0:num_extract]
+ 
     def get_metainfo_from_title(self,name_of_paper,num_get,num_extract)->dict:
         """ 
         入力論文タイトルでAPIを叩き、検索する。検索した中から完全一致する論文名を探しだし、その参考文献メタデータのリストを返す。
