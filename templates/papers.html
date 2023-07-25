@@ -21,6 +21,22 @@
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td>
+                        <a>{{ main_paper["title"] }}</a>
+                    </td>
+                    <td>
+                        {{ main_paper["tldr"] }}
+                    </td>
+                    <td>
+                        {{ main_paper["year"] }}
+                    </td>
+                    <td>
+                        {{ main_paper["citationCount"] }}
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
                 {% for paper in papers %}
                 <tr>
                     <td>

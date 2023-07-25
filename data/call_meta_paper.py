@@ -99,7 +99,7 @@ class PaperCaller:
             dt.pop("abstract")
             dt.pop("authors")
             
-        return main_data + data[0:num_extract]
+        return main_data[0],  data[0:num_extract]
  
     def get_metainfo_from_title(self,name_of_paper,num_get,num_extract)->dict:
         """ 

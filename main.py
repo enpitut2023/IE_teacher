@@ -39,11 +39,11 @@ def root(keyword):
 @app.route("/papers/<string:paperId>", methods=["GET", "POST"])
 def papers(paperId):
   num_get=1000
-  papers_data = pc.get_metainfo_from_paperId(paperId, num_get, num_get)
+  main_data, papers_data = pc.get_metainfo_from_paperId(paperId, num_get, num_get)
 
   if len(papers_data) != 0:
     keys = papers_data[0].keys()
-    return render_template("papers.html", n=len(keys), papers=papers_data, keys=keys)
+    return render_template("papers.html", n=len(keys), main_paper=main_data, papers=papers_data, keys=keys)
   
   return render_template("notfound.html")
 
