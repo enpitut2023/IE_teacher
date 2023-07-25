@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <head>
+        <title>情報工学先生</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="{{ n }}">おすすめの論文一覧</th>
+                </tr>
+                <tr>
+                    {% for key in keys %}
+                    <th colspan="1">{{ key }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for paper in papers %}
+                <tr>
+                    {% for k, v in paper.items() %}
+                    {% if k == "title" %}
+                    <td id="{{ k }}"><a href="{{ url_for("papers" , keyword = v) }}">{{ v }}</a></td>
+                    {% else %}
+                    <td id="{{ k }}">{{ v }}</td>
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
