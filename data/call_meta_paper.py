@@ -68,6 +68,8 @@ class PaperCaller:
         data = self.sort_metainfo_by_importance(data)
         paperIds = self.extract_paperIds(data)
         data = self.get_paper_data_tldr(paperIds[:num_extract])
+        self.culcurate_importance(data, 0)
+        data = self.sort_metainfo_by_importance(data)
 
         self.extract_names(data)
         self.extract_tldr(data)
@@ -76,7 +78,6 @@ class PaperCaller:
             dt.pop("paperId")
             dt.pop("abstract")
             dt.pop("authors")
-            dt.pop("importance")
             
         return main_paper, data[0:num_extract]
     
