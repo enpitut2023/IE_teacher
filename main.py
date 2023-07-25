@@ -17,20 +17,49 @@ def index():
   if request.method == 'POST':
     keyword = request.form["keyword"]
 
-    return redirect(url_for("papers" , keyword = keyword))
+    return redirect(url_for("root" , keyword = keyword))
 
   return render_template('index.html')
 
-@app.route("/papers/<string:keyword>", methods=["GET", "POST"])
-def papers(keyword):
+@app.route("/root/<string:keyword>", methods=["GET", "POST"])
+def root(keyword):
+  if request.method == 'POST':
+    if "keyword" in request.form.keys():
+      keyword = request.form["keyword"]
+
+      return redirect(url_for("root" , keyword = keyword))
+    
+    elif "paperId" in request.form.keys():
+      paperId = request.form["paperId"]
+      return redirect(url_for("papers" , paperId = paperId))
+
   num_get=1000
-  _, papers_data = pc.get_metainfo_from_title(keyword, num_get, num_get)
+  papers_data = pc.get_metainfo_from_keyword(keyword, num_get, num_get)
+  
+  if len(papers_data) != 0:
+    keys = papers_data[0].keys()
+    return render_template("root.html", n=len(keys), papers=papers_data, keys=keys)
+  else:
+    return render_template("notfound.html")
+
+@app.route("/papers/<string:paperId>", methods=["GET", "POST"])
+def papers(paperId):
+  if request.method == 'POST':
+    keyword = request.form["keyword"]
+
+    return redirect(url_for("root" , keyword = keyword))
+  
+  num_get=1000
+  paperIds=paperId.split('-')
+  targ_paper=paperIds[-1]
+  main_data, papers_data = pc.get_metainfo_from_paperId(targ_paper, num_get, num_get)
 
   if len(papers_data) != 0:
     keys = papers_data[0].keys()
-    return render_template("papers.html", n=len(keys), papers=papers_data, keys=keys)
+    return render_template("papers.html", n=len(keys), main_paper=main_data, papers=papers_data, keys=keys,
+                           paperIds=paperId)
   
-  return render_template("papers.html")
+  return render_template("notfound.html")
 
 
 """

@@ -8,20 +8,16 @@
         <meta charset="utf-8"/>
     </head>
     <body>
-        <header>
-            <div class="logo">
-                <img src="\static\figures\header_logo.jpg" alt="情報工学先生">
-            </div>
-        </header>
-        <form class="form-inline" method="post">
-            <div class="form-group">
-                <label class="sr-only" for="screen_name"></label>
-                <div class="input-group mb-3">
-                   <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
-                   <input type="submit"  value="&#xf002">
+        <body>
+            <form class="form-inline" method="post">
+                <div class="form-group">
+                    <label class="sr-only" for="screen_name"></label>
+                    <div class="input-group mb-3">
+                       <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
+                       <input type="submit"  value="&#xf002">
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
         <table>
             <thead>
                 <tr>
@@ -35,26 +31,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>
-                        <a>{{ main_paper["title"] }}</a>
-                    </td>
-                    <td>
-                        {{ main_paper["tldr"] }}
-                    </td>
-                    <td>
-                        {{ main_paper["year"] }}
-                    </td>
-                    <td>
-                        {{ main_paper["citationCount"] }}
-                    </td>
-                </tr>
-            </tbody>
-            <tbody>
                 {% for paper in papers %}
                 <tr>
                     <td>
-                        <a href='{{ url_for("papers", paperId=paperIds+"-"+paper["paperId"]) }}'>{{ paper["title"] }}</a>
+                        <a href='{{ url_for("papers", paperId=paper["paperId"]) }}'>{{ paper["title"] }}</a>
                     </td>
                     <td>
                         {{ paper["tldr"] }}
