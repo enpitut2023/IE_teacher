@@ -36,7 +36,7 @@ class PaperCaller:
         r = requests.get(url=endpoint, params=params)
         r_dict = json.loads(r.text)
         if check_api_result(r_dict)==False:
-            return self.empty_rdata()
+            return []
         data = r_dict['data']
 
         if len(data) < num_extract:
