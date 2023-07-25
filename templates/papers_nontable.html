@@ -44,7 +44,7 @@
             <h1>この論文は以下の文献を引用しています</h1>
             {% for paper in papers %}
             <div class="paper_item">
-                <a class="paper_title" href='{{ url_for("papers", paperId=paper["paperId"]) }}'>
+                <a class="paper_title" href='{{ url_for("papers", paperId=paperIds+"-"+paper["paperId"]) }}'>
                     {{ paper["title"] }}
                 </a>                   
                 <p class="paper_tldr">

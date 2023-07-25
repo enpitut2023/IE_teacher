@@ -6,6 +6,7 @@ from data.call_meta_paper import PaperCaller
 app = Flask(__name__)
 pc = PaperCaller()
 
+
 def get_db():
     if 'db' not in g:
          g.db = sqlite3.connect('TestDB.db')

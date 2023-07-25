@@ -29,7 +29,9 @@
             <h1>クリックした参考文献一覧（仮）</h1>
             {% for paper in papers %}
             <div class="paper_item">
-                <a class="paper_title" href='{{ url_for("papers", paperId=paper["paperId"]) }}'>{{ paper["title"] }}</a>                   
+                <a class="paper_title">
+                    {{ paper["title"] }}
+                </a>                   
                 <p class="paper_tldr">
                     TLDR; {{ paper["tldr"] }}
                 </p>
