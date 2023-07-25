@@ -82,7 +82,7 @@ class PaperCaller:
 
         data = self.get_main_paper_reference_dict(paperId)
         if len(data) == 0:
-            return []
+            return main_data[0], []
 
         if len(data) < num_extract:
             num_extract = len(data)
