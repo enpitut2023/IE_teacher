@@ -5,7 +5,7 @@ https://api.semanticscholar.org/api-docs/
 
 import requests
 import json
-from data.extract_by_rake import Rake_Keyword_Extractor
+# from data.extract_by_rake import Rake_Keyword_Extractor
 
 class PaperCaller:
     def __init__(self):
@@ -27,7 +27,7 @@ class PaperCaller:
         if num_get < num_extract:
             num_extract = num_get
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
-        keyword = name_of_paper
+        keyword = keyword
         params = {
             'query': keyword,
             'fields': ','.join(self.fields),
@@ -62,30 +62,16 @@ class PaperCaller:
             if r_dict['total']==0:
                 return False
             return True
+        
         num_get_max = 100
         if num_get > num_get_max:
             num_get = num_get_max
         if num_get < num_extract:
             num_extract = num_get
         
-        endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
-        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
-
-        params = {
-            "fields": ','.join(fields)
-        }
-
-        r = requests.post(endpoint, params=params, json={"ids": paperId})
-        r = '{"data": ' + r.text[:-1] + "}"
-        r_dict = json.loads(r)["data"]
-
-        if check_api_result(r_dict)==False:
+        data = self.get_main_paper_reference_dict(paperId)
+        if len(data) == 0:
             return []
-        
-        data = r_dict['data']
-        main_paper = data[0]
-        main_paper_id = main_paper["paperId"]
-        data = self.get_main_paper_reference_dict(main_paper_id)
 
         if len(data) < num_extract:
             num_extract = len(data)
@@ -102,7 +88,7 @@ class PaperCaller:
             dt.pop("abstract")
             dt.pop("authors")
             
-        return main_paper, data[0:num_extract]
+        return data[0:num_extract]
  
     def get_metainfo_from_title(self,name_of_paper,num_get,num_extract)->dict:
         """ 
@@ -169,7 +155,7 @@ class PaperCaller:
             dt.pop("abstract")
             dt.pop("authors")
             
-        return main_paper, data[0:num_extract]
+        return data[0:num_extract]
     
     def sort_metainfo(self, list_dict):
         """ 
@@ -328,7 +314,7 @@ class PaperCaller:
             result.append(paper["citedPaper"])
             
         return result
-    
+    """ 
     def get_papers_from_rake(self,abst,num_get=100,num_keywords=5):
         rake_ext=Rake_Keyword_Extractor()
         keywords=rake_ext.get_keywords(abst,num_keywords)
@@ -346,7 +332,8 @@ class PaperCaller:
             r_dict = json.loads(r.text)
             data = r_dict['data']
             ret=ret+data[0:num_get]
-        return ret
+        return ret 
+    """
     
     def get_paper_data_tldr(self, paperIDs):
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"

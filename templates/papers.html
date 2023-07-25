@@ -11,11 +11,13 @@
         <table>
             <thead>
                 <tr>
-                    <th colspan="{{ 2 }}">おすすめの論文一覧</th>
+                    <th colspan="{{ 4 }}">おすすめの論文一覧</th>
                 </tr>
                 <tr>
-                    <th colspan="1">{{ keys["title"] }}</th>
-                    <th colspan="1">{{ keys["tldr"] }}</th>
+                    <th colspan="1">title</th>
+                    <th colspan="1">tldr</th>
+                    <th colspan="1">year</th>
+                    <th colspan="1">citationCount</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +28,12 @@
                     </td>
                     <td>
                         {{ paper["tldr"] }}
+                    </td>
+                    <td>
+                        {{ paper["year"] }}
+                    </td>
+                    <td>
+                        {{ paper["citationCount"] }}
                     </td>
                 </tr>
                 {% endfor %}
