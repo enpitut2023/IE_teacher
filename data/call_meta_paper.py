@@ -357,6 +357,8 @@ class PaperCaller:
         r = requests.post(endpoint, params=params, json={"ids": paperIDs})
         r = '{"data": ' + r.text[:-1] + "}"
         r_dict = json.loads(r)["data"]
+        #print(r_dict)
+        #self.extract_tldr(r_dict)
 
         return r_dict
 if __name__ == "__main__":
