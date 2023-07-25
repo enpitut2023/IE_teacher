@@ -65,9 +65,24 @@ class PaperCaller:
         if num_get < num_extract:
             num_extract = num_get
         
+        endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
+
+        params = {
+            "fields": ','.join(fields)
+        }
+
+        r = requests.post(endpoint, params=params, json={"ids": [paperId]})
+        r = '{"data": ' + r.text[:-1] + "}"
+        r_dict = json.loads(r)["data"]
+        if len(r_dict) == 0:
+            main_data = []
+        main_data = r_dict
+        self.extract_tldr(main_data)
+
         data = self.get_main_paper_reference_dict(paperId)
         if len(data) == 0:
-            return []
+            return main_data[0], []
 
         if len(data) < num_extract:
             num_extract = len(data)
@@ -84,7 +99,7 @@ class PaperCaller:
             dt.pop("abstract")
             dt.pop("authors")
             
-        return data[0:num_extract]
+        return main_data[0],  data[0:num_extract]
  
     def get_metainfo_from_title(self,name_of_paper,num_get,num_extract)->dict:
         """ 
@@ -348,4 +363,8 @@ class PaperCaller:
 if __name__ == "__main__":
     pc=PaperCaller()
     input_txt = input("keyを入力:")
-    data=pc.get_metainfo_from_title(input_txt,1000,50)
+    data=pc.get_metainfo_from_keyword(input_txt,1000,50)
+    data = pc.get_metainfo_from_paperId(data[0]['paperId'], 10, 10)
+    for d in data:
+        print(d)
+
