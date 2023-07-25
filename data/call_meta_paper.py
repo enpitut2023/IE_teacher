@@ -78,6 +78,7 @@ class PaperCaller:
         if len(r_dict) == 0:
             main_data = []
         main_data = r_dict
+        self.extract_tldr(main_data)
 
         data = self.get_main_paper_reference_dict(paperId)
         if len(data) == 0:
