@@ -54,15 +54,25 @@ header {
 }
 
 /* Flexコンテナを作成して子要素を横に並べる */
-.container {
+.index-container {
     display: flex;
     align-items: center; /* 垂直方向に中央寄せ */
 }
 
-.img{
-    width: 70%;
-    height: 70%;
+.index-container img{
+    width: 50%;
+    height: auto;
     margin-right: 0px;
+}
+
+.header-container {
+    display: flex;
+    align-items: center; /* 垂直方向に中央寄せ */
+}
+
+.header-container img{
+    width: 35%;
+    height: auto;
 }
 
 .logo {
@@ -71,4 +81,8 @@ header {
 
 .logo img {
     height: 50px; /* ロゴの高さを設定 */
+}
+
+.main_table {
+    margin-bottom: 30px;
 }
