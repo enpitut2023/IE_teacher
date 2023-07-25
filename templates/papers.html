@@ -40,7 +40,7 @@
                 {% for paper in papers %}
                 <tr>
                     <td>
-                        <a href='{{ url_for("papers", paperId=paper["paperId"]) }}'>{{ paper["title"] }}</a>
+                        <a href='{{ url_for("papers", paperId=paperIds+"-"+paper["paperId"]) }}'>{{ paper["title"] }}</a>
                     </td>
                     <td>
                         {{ paper["tldr"] }}
