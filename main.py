@@ -38,8 +38,8 @@ def root(keyword):
   
   if len(papers_data) != 0:
     keys = papers_data[0].keys()
-    #return render_template("root_nontable.html", n=len(keys), papers=papers_data, keys=keys)
-    return render_template("root.html", n=len(keys), papers=papers_data, keys=keys)
+    return render_template("root_nontable.html", n=len(keys), papers=papers_data, keys=keys)
+    # return render_template("root.html", n=len(keys), papers=papers_data, keys=keys)
   else:
     return render_template("notfound.html")
 
@@ -66,7 +66,7 @@ def papers(paperId):
   else:
     papers_data = pc.get_metainfo_from_paperIds(paperIds)
 
-    #return render_template("result_nontable.html", papers=papers_data)
+    # return render_template("result_nontable.html", papers=papers_data)
     return render_template("result.html", papers=papers_data)
 
 
