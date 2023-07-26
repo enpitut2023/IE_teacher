@@ -20,7 +20,7 @@ tfoot {
 
 .c-form-text {
     height: 2.4em;
-    width: 200%;
+    width: 80%;
     padding: 0 16px;
     border-radius: 4px;
     border: none;
@@ -35,7 +35,7 @@ tfoot {
     box-shadow: 0 0 0 2px rgb(33, 150, 243) inset;
 }
 
-input[type="submit"]{
+.search-button {
     cursor: pointer;
     font-family: FontAwesome;
     font-size: 1.2em;
@@ -49,6 +49,26 @@ input[type="submit"]{
     height: 1.9em;
     display: inline-block;
     vertical-align: middle;
+}
+
+.finish-button {
+    cursor: pointer;
+    font-family: FontAwesome;
+    font-size: 1.2em;
+    border: none;
+    background: #ff0000;
+    border: 1px solid #ff0000;
+    border-radius: 3px;
+    color: #fff;
+    outline : none;
+    width: 5em;
+    height: 1.9em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.form-inline{
+    width: 60%
 }
 
 .input-group {

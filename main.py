@@ -64,11 +64,26 @@ def papers(paperId):
     return render_template("papers.html", n=len(keys), main_paper=main_data, papers=papers_data, keys=keys,
                            paperIds=paperId)
   else:
-    papers_data = pc.get_metainfo_from_paperIds(paperIds)
+    # papers_data = pc.get_metainfo_from_paperIds(paperIds)
 
-    # return render_template("result_nontable.html", papers=papers_data)
-    return render_template("result.html", papers=papers_data)
+    # # return render_template("result_nontable.html", papers=papers_data)
+    # return render_template("result.html", papers=papers_data)
+    return redirect(url_for("result", paperId = paperId))
 
+@app.route("/result/<string:paperId>", methods=["GET", "POST"])
+def result(paperId):
+  if request.method == 'POST':
+    keyword = request.form["keyword"]
+
+    return redirect(url_for("root" , keyword = keyword))
+  
+  paperIds=paperId.split('-')
+  # for id in paperIds:
+  #   print(id)
+  papers_data = pc.get_metainfo_from_paperIds(paperIds)
+
+  # return render_template("result_nontable.html", papers=papers_data)
+  return render_template("result.html", papers=papers_data)
 
 """
 Localでhtmlを表示する場合はhost="localhost"
