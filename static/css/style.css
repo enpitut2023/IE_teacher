@@ -53,7 +53,7 @@ input[type="submit"]{
 
 .input-group {
     align-content: center;
-}  
+} 
 
 header {
     background-color: #333; /* ヘッダーの背景色を設定 */
@@ -76,6 +76,15 @@ header {
     border: 1px solid black;
     margin-right: 30px;
     margin-bottom: 0px;
+}
+
+.h1_head{
+    margin: 0px;
+}
+.explain{
+    color: #7e7e7e;
+    margin-top: 0px;
+    margin-left: 60px;
 }
 
 .papers_content{
