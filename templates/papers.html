@@ -26,7 +26,7 @@
                     <button type="submit" name="paperId" value="{{ paperIds }}">終了</button>
                 </a> -->
                 <form action='{{ url_for("result", paperId=paperIds) }}' method="get">
-                    <input type="submit" value="探索終了", class="finish-button">
+                    <button type="submit" class="finish-button">クリックした<br>論文履歴を表示</button>
                 </form>
             </div>
         </header>

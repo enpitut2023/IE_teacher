@@ -54,17 +54,18 @@ tfoot {
 .finish-button {
     cursor: pointer;
     font-family: FontAwesome;
-    font-size: 1.2em;
+    font-size: 1.1em;
     border: none;
-    background: #ff0000;
-    border: 1px solid #ff0000;
+    background: #a9bc3d;
+    border: 1px solid #a9bc3d;
     border-radius: 3px;
     color: #fff;
     outline : none;
-    width: 5em;
-    height: 1.9em;
+    width: 9em;
+    height: 3em;
     display: inline-block;
     vertical-align: middle;
+    margin-left: 5px;
 }
 
 .form-inline{
