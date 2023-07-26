@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="ja">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <head>
+        <title>情報工学先生</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <header>
+            <div class="header-container">
+                <a class="header-img" href="{{ url_for('index') }}">
+                    <img src="\static\figures\header_logo.jpg" alt="情報工学先生">
+                </a>
+                <form class="form-inline" method="post">
+                    <div class="form-group">
+                        <label class="sr-only" for="screen_name"></label>
+                        <div class="input-group mb-3">
+                            <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
+                            <input type="submit"  value="&#xf002" class="search-button">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </header>
+
+        <div class="root_content">
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="{{ 4 }}">検索結果一覧</th>
+                    </tr>
+                    <tr>
+                        <th colspan="1">title</th>
+                        <th colspan="1">tldr</th>
+                        <th colspan="1">year</th>
+                        <th colspan="1">citationCount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paper in papers %}
+                    <tr>
+                        <td>
+                            <a href='{{ url_for("papers", paperId=paper["paperId"]) }}'>{{ paper["title"] }}</a>
+                        </td>
+                        <td>
+                            {{ paper["tldr"] }}
+                        </td>
+                        <td>
+                            {{ paper["year"] }}
+                        </td>
+                        <td>
+                            {{ paper["citationCount"] }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/style.css">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <head>
@@ -7,35 +9,19 @@
         <meta charset="utf-8"/>
     </head>
     <body>
-        <form class="form-inline" method="post">
-            <div class="form-group">
-                <label class="sr-only" for="screen_name"></label>
-                <div class="input-group mb-3">
-                   <input id="keyword" name="keyword" placeholder="論文タイトルを入力してください。" type="text" class="c-form-text">
-                   <input type="submit"  value="&#xf002">
+        <div class="index-container">
+            <img src="\static\figures\header_logo.jpg" alt="情報工学先生">
+        </div>
+        <div class="form-container">
+            <form class="form-inline" method="post">
+                <div class="form-group">
+                    <label class="sr-only" for="screen_name"></label>
+                    <div class="input-group mb-3">
+                    <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
+                    <input type="submit"  value="&#xf002" class="search-button">
+                    </div>
                 </div>
-            </div>
-        </form>
-        <table>
-            <thead>
-                <tr>
-                    <th colspan="{{ n }}">おすすめの論文一覧</th>
-                </tr>
-                <tr>
-                    {% for key in keys %}
-                    <th colspan="1">{{ key }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for paper in papers %}
-                <tr>
-                    {% for k, v in paper.items() %}
-                    <td id="{{ k }}">{{ v }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            </form>
+        </div>
     </body>
 </html>
