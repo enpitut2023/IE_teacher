@@ -28,7 +28,7 @@ def root(keyword):
       paperId = request.form["paperId"]
       return redirect(url_for("papers" , paperId = paperId))
   
-  keyword = parse.unquote(keyword).replace(" ", "+")
+  keyword = parse.unquote(keyword)
   papers_data = pc.get_papers_by_keyword(keyword)
   
   if len(papers_data) != 0:
