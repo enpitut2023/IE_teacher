@@ -152,6 +152,11 @@ header {
     height: 50px; /* ロゴの高さを設定 */
 }
 
+.link_seman_logo img{
+    width: 100%;
+    height: auto;
+}
+
 .main_table {
     margin-bottom: 30px;
     margin-left: 60px;
