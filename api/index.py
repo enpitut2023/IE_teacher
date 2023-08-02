@@ -36,7 +36,7 @@ def root(keyword):
     return render_template("root_nontable.html", n=len(keys), papers=papers_data, keys=keys, keyword=keyword)
     # return render_template("root.html", n=len(keys), papers=papers_data, keys=keys)
   else:
-    return render_template("notfound.html")
+    return render_template("notfound.html", keyword=keyword)
 
 @app.route("/papers/<string:paperId>", methods=["GET", "POST"])
 def papers(paperId):

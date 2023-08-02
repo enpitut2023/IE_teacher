@@ -45,7 +45,6 @@ class PaperCaller:
         # 結果を確認
         if not self.check_api_result(r_dict):
             return []
-        print(r_dict)
         data = self.cut_none(r_dict['data'])
 
         self.extract_author_names(data)
