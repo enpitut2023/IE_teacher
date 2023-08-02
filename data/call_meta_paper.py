@@ -14,6 +14,9 @@ class PaperCaller:
     def check_api_result(self, data):
         if type(data) == dict:
             try:
+                if "total" in data.keys():
+                    if data["total"] == 0:
+                        return False
                 if "message" in data.keys() or "error" in data.keys():
                     return False
             except:
@@ -42,6 +45,7 @@ class PaperCaller:
         # 結果を確認
         if not self.check_api_result(r_dict):
             return []
+        print(r_dict)
         data = self.cut_none(r_dict['data'])
 
         self.extract_author_names(data)
