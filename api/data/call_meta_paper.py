@@ -356,7 +356,7 @@ class PaperCaller:
     
     def get_metainfo_from_paperIds(self, paperIDs):
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
-        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr", "url")
 
         params = {
             "fields": ','.join(fields)
