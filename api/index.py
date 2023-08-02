@@ -1,6 +1,5 @@
 import sqlite3
 from flask import Flask, render_template, request, url_for, redirect, g
-from data.papers import get_papers_data
 from data.call_meta_paper import PaperCaller
 
 app = Flask(__name__)
