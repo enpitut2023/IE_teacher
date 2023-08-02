@@ -22,24 +22,7 @@ https://ieteacher-2--miura-code.repl.co/
 [GoogleScholarやConnectedPapers]とは異なり、  
 [ユーザにとって重要な先行研究を容易に判別できるよう]にします。  
 
-(更新日:7/21)
+(更新日:8/2)
 ### 作業場所URL
 - [メインMiroはこちら](https://miro.com/app/board/uXjVM4W_zM4=/)
 - [チームの情報共有GoogleDocはこちら](https://drive.google.com/drive/folders/12qwP0sQS7g64rPYkWEqf_Gr8yu3Gmzsc?usp=sharing)
-
-## 開発環境
-- Python 3.10.8
--  
-
-## 使い方
-```
-pip install -r requirements.txt
-```
-```
-python app.py
-```
-
-```
-python -c "import nltk; nltk.download('stopwords')"
-python -c "import nltk; nltk.download('punkt')"
-```
