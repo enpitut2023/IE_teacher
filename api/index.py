@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, url_for, redirect
 from data.call_meta_paper import PaperCaller
+from urllib import parse
+
 
 app = Flask(__name__)
 pc = PaperCaller()
@@ -25,7 +27,8 @@ def root(keyword):
     elif "paperId" in request.form.keys():
       paperId = request.form["paperId"]
       return redirect(url_for("papers" , paperId = paperId))
-
+  
+  keyword = parse.unquote(keyword).replace(" ", "+")
   papers_data = pc.get_papers_by_keyword(keyword)
   
   if len(papers_data) != 0:

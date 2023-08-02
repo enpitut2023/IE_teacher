@@ -29,7 +29,6 @@ class PaperCaller:
     def get_papers_by_keyword(self, keyword)->list:
         # 論文データ取得用のパラメータ設定
         endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
-        keyword = keyword
         params = {
             'query': keyword,
             'fields': ','.join(self.fields),
