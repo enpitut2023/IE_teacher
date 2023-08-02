@@ -40,7 +40,9 @@
                     {% for paper in papers %}
                     <tr>
                         <td>
-                            <a>{{ paper["title"] }}</a>
+                            <a href='{{ paper["url"] }}'>
+                                {{ paper["title"] }}
+                            </a>
                             <img src="https://assets-global.website-files.com/605236bb767e9a5bb229c63c/605274dd4af9b0ca8ac84182_s2-logo.svg" loading="lazy" height="20" alt="Semantic Scholar" class="link_seman_logo">
                         </td>
                         <td>
