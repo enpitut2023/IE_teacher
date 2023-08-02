@@ -26,8 +26,7 @@ def root(keyword):
       paperId = request.form["paperId"]
       return redirect(url_for("papers" , paperId = paperId))
 
-  num_get=1000
-  papers_data = pc.get_papers_by_keyword(keyword, num_get, num_get)
+  papers_data = pc.get_papers_by_keyword(keyword)
   
   if len(papers_data) != 0:
     keys = papers_data[0].keys()
