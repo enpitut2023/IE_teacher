@@ -1,6 +1,6 @@
 ## チーム情報
 ### チーム名
-「理工情報生命学術院」  
+「理工情報生命学術院（仮）」  
 ### サービス名
 「情報工学先生」
 https://ieteacher-2--miura-code.repl.co/  
@@ -20,26 +20,9 @@ https://ieteacher-2--miura-code.repl.co/
 [サーベイ支援システム]です。  
 これは、[ユーザーの選ぶ論文を基にして参考文献を素早く繰り返し遡ることができる]ことで、  
 [GoogleScholarやConnectedPapers]とは異なり、  
-[先行研究を素早く調査することができるよう]にします。  
+[先行研究を素早く調査することができるよう]にします。 
 
-(更新日:7/26)
+(更新日:8/2)
 ### 作業場所URL
 - [メインMiroはこちら](https://miro.com/app/board/uXjVM4W_zM4=/)
 - [チームの情報共有GoogleDocはこちら](https://drive.google.com/drive/folders/12qwP0sQS7g64rPYkWEqf_Gr8yu3Gmzsc?usp=sharing)
-
-## 開発環境
-- Python 3.10.8
--  
-
-## 使い方
-```
-pip install -r requirements.txt
-```
-```
-python app.py
-```
-
-```
-python -c "import nltk; nltk.download('stopwords')"
-python -c "import nltk; nltk.download('punkt')"
-```
