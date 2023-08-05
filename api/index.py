@@ -47,8 +47,13 @@ def papers(paperId):
   
   paperIds=paperId.split('-')
   main_paper_id=paperIds[-1]
-  main_data = pc.get_paper_by_paperId(main_paper_id)
-  papers_data = pc.get_reference_papers_by_main_paper_id(main_paper_id)
+  #getメソッドで1つの論文を取得するように変更。
+  main_data = pc.get_paper_by_paperId_aid(main_paper_id)
+  #pc.get_reference_papers_by_main_paper_idを2つのメソッドに分割した。
+  reference_paperIds=pc.get_reference_paperIds_of(main_paper_id)
+  papers_data=pc.get_papers_by_paperIds_using_for_loop(reference_paperIds)
+  #papers_data=pc.get_papers_by_paperIds_with_limitation(reference_paperIds,10)
+  #papers_data = pc.get_reference_papers_by_main_paper_id(main_paper_id)
 
   if len(papers_data) != 0:
     keys = papers_data[0].keys()
@@ -73,7 +78,10 @@ def result(paperId):
   paperIds=paperId.split('-')
   # for id in paperIds:
   #   print(id)
-  papers_data = pc.get_papers_by_paperIds(paperIds)
+  #limitation付きメソッドで取る場合。とりあえず10で。
+  #papers_data = pc.get_papers_by_paperIds_with_limitation(paperIds,10)
+  #forループで取得する場合
+  papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIds)
 
   # return render_template("result_nontable.html", papers=papers_data)
   return render_template("result.html", papers=papers_data)
@@ -83,6 +91,8 @@ Localでhtmlを表示する場合はhost="localhost"
 Replit上でhtmlを表示する場合はhost="0.0.0.0",port=81を
 使用する
 """
+"""
 if __name__ == "__main__":
   # app.run(debug=False, host="0.0.0.0", port=81)
   app.run(debug=True, host='localhost')
+"""

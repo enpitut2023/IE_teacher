@@ -67,6 +67,7 @@ class PaperCaller:
         # 論文データ取得
         r = requests.post(endpoint, params=params, json={"ids": [paperId]})
         r = '{"data": ' + r.text[:-1] + "}"
+        print(r)
         r_dict = self.cut_none(json.loads(r)["data"]) # リスト型
 
         # 結果を確認
@@ -76,6 +77,69 @@ class PaperCaller:
         self.extract_tldr(r_dict)
 
         return r_dict[0]
+    
+    #getメソッドで論文1個を取得するメソッド
+    def get_paper_by_paperId_aid(self,paperID):
+        endpoint = "https://api.semanticscholar.org/graph/v1/paper/{}?fields={}"\
+        .format(paperID,"title,year,citationCount,tldr")
+        r=requests.get(endpoint)
+        r = '{"data": ' + r.text[:-1] + "}"
+        r_dict = json.loads(r)["data"]
+        if not self.check_api_result(r_dict):
+            return {}
+        #辞書1個を返してくる。理由はよく知らない。
+        return r_dict
+    
+    def get_papers_by_paperIds_using_for_loop(self,paperIDs):
+        papers=[]
+        for paperID in paperIDs:
+            #time.sleep(0.2)
+            res=self.get_paper_by_paperId_aid(paperID)
+            if res!=None:
+                papers.append(res)
+        return papers
+    
+    def get_papers_by_paperIds_with_limitation(self, paperIDs,limit=5)->list:
+        # 論文データ取得用のパラメータ設定
+        limit=5
+        endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
+        params = {
+            "fields": ','.join(fields),
+            "limit":5
+        }
+
+        # 論文データ取得
+        r = requests.post(endpoint, params=params, json={"ids": paperIDs[0:limit]})
+        r = '{"data": ' + r.text[:-1] + "}"
+        r_dict = json.loads(r)["data"]
+
+        # 結果を確認
+        if not self.check_api_result(r_dict):
+            return []
+        
+        r_dict = self.cut_none(r_dict)
+        
+        self.extract_tldr(r_dict)
+
+        return r_dict
+    
+    def get_reference_paperIds_of(self,mainpaperID):
+        endpoint = 'https://api.semanticscholar.org/graph/v1/paper/{}/references'\
+        .format(mainpaperID)
+        #参考文献のタイトルとpaperIdのみ取得。
+        fields = ('title',"paperId")
+        params = {
+            'fields': ','.join(fields),
+            "limit": 10
+        }
+        #参考文献のpaperIdのリストを作る。名前はpaperIDs
+        r = requests.get(url=endpoint, params=params)
+        r_dict = json.loads(r.text)
+        paperIDs=[]
+        for reference in r_dict["data"]:
+            paperIDs.append(reference["citedPaper"]["paperId"])
+        return paperIDs
     
     def get_papers_by_paperIds(self, paperIDs)->list:
         # 論文データ取得用のパラメータ設定
