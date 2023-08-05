@@ -59,7 +59,7 @@ class PaperCaller:
     def get_paper_by_paperId(self, paperId)->dict:
         # 論文データ取得用のパラメータ設定
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
-        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr", "url")
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
         params = {
             "fields": ','.join(fields)
         }
@@ -80,7 +80,7 @@ class PaperCaller:
     def get_papers_by_paperIds(self, paperIDs)->list:
         # 論文データ取得用のパラメータ設定
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
-        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr", "url")
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
         params = {
             "fields": ','.join(fields)
         }
