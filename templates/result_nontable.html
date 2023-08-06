@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="ja">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <head>
+        <title>情報工学先生</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <header>
+            <div class="header-container">
+                <a class="header-img" href="{{ url_for('index') }}">
+                    <img src="\static\figures\header_logo.jpg" alt="情報工学先生">
+                </a>
+                <form class="form-inline" method="post">
+                    <div class="form-group">
+                        <label class="sr-only" for="screen_name"></label>
+                        <div class="input-group mb-3">
+                            <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
+                            <input type="submit"  value="&#xf002" class="search-button">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </header>
+
+        <div class="result_content">
+            <h1>クリックした参考文献一覧（仮）</h1>
+            {% for paper in papers %}
+            <div class="paper_item">
+                <a class="paper_title">
+                    {{ paper["title"] }}
+                </a>                   
+                <p class="paper_tldr">
+                    TLDR; {{ paper["tldr"] }}
+                </p>
+                <p class="paper_detail">
+                    {{ paper["year"] }} published, 
+                    {{ paper["citationCount"] }} citations
+                </p>
+                <div class="item_divider"></div>
+            </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>
