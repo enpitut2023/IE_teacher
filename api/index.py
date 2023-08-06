@@ -7,6 +7,21 @@ app = Flask(__name__)
 pc = PaperCaller()
 
 
+"""
+KEYWORD_SEARCH_GET_LIMIT
+
+MAX: 100
+"""
+KEYWORD_SEARCH_GET_LIMIT = 100
+
+PAPER_IDS_POST_LIMIT = 500
+
+REFERENCE_PAPERS_GET_LIMIT = 500
+
+GET_LIMIT_USING_FOR_LOOP = 10
+
+
+
 @app.route('/', methods=["GET", "POST"])
 def index():
   if request.method == 'POST':
@@ -29,12 +44,11 @@ def root(keyword):
       return redirect(url_for("papers" , paperId = paperId))
   
   keyword = parse.unquote(keyword)
-  papers_data = pc.get_papers_by_keyword(keyword)
+  papers_data = pc.get_papers_by_keyword(keyword, limit=KEYWORD_SEARCH_GET_LIMIT)
   
   if len(papers_data) != 0:
     keys = papers_data[0].keys()
     return render_template("root_nontable.html", n=len(keys), papers=papers_data, keys=keys, keyword=keyword)
-    # return render_template("root.html", n=len(keys), papers=papers_data, keys=keys)
   else:
     return render_template("notfound.html", keyword=keyword)
 
@@ -47,25 +61,24 @@ def papers(paperId):
   
   paperIds=paperId.split('-')
   main_paper_id=paperIds[-1]
-  #getメソッドで1つの論文を取得するように変更。
-  main_data = pc.get_paper_by_paperId_aid(main_paper_id)
-  #pc.get_reference_papers_by_main_paper_idを2つのメソッドに分割した。
-  reference_paperIds=pc.get_reference_paperIds_of(main_paper_id)
-  papers_data=pc.get_papers_by_paperIds_using_for_loop(reference_paperIds)
-  #papers_data=pc.get_papers_by_paperIds_with_limitation(reference_paperIds,10)
-  #papers_data = pc.get_reference_papers_by_main_paper_id(main_paper_id)
+
+  main_data = pc.get_paper_by_paperId(main_paper_id)
+  reference_paperIds = pc.get_reference_papers_ids_by_main_paper_id(main_paper_id, REFERENCE_PAPERS_GET_LIMIT)
+  # papers_data = pc.get_papers_by_paperIds(paperIDs=reference_paperIds, limit=PAPER_IDS_POST_LIMIT)
+  papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIDs=reference_paperIds, limit=GET_LIMIT_USING_FOR_LOOP)
+
+  """
+  POSTが死んだら使う
+
+  papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIDs=reference_paperIds, limit=GET_LIMIT_USING_FOR_LOOP)
+  """
 
   if len(papers_data) != 0:
     keys = papers_data[0].keys()
-    # return render_template("papers_nontable.html", n=len(keys), main_paper=main_data, papers=papers_data, keys=keys,
-    #                        paperIds=paperId)
     return render_template("papers.html", n=len(keys), main_paper=main_data, papers=papers_data, keys=keys,
                            paperIds=paperId)
   else:
-    # papers_data = pc.get_metainfo_from_paperIds(paperIds)
-
-    # # return render_template("result_nontable.html", papers=papers_data)
-    # return render_template("result.html", papers=papers_data)
+    
     return redirect(url_for("result", paperId = paperId))
 
 @app.route("/result/<string:paperId>", methods=["GET", "POST"])
@@ -76,23 +89,18 @@ def result(paperId):
     return redirect(url_for("root" , keyword = keyword))
   
   paperIds=paperId.split('-')
-  # for id in paperIds:
-  #   print(id)
-  #limitation付きメソッドで取る場合。とりあえず10で。
-  #papers_data = pc.get_papers_by_paperIds_with_limitation(paperIds,10)
-  #forループで取得する場合
-  papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIds)
 
-  # return render_template("result_nontable.html", papers=papers_data)
+  # papers_data=pc.get_papers_by_paperIds(paperIds, PAPER_IDS_POST_LIMIT)
+  papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIDs=paperIds, limit=GET_LIMIT_USING_FOR_LOOP)
+
+  """
+  POSTが死んだら使う
+
+  papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIds,GET_LIMIT_USING_FOR_LOOP)
+  """
+
   return render_template("result.html", papers=papers_data)
 
-"""
-Localでhtmlを表示する場合はhost="localhost"
-Replit上でhtmlを表示する場合はhost="0.0.0.0",port=81を
-使用する
-"""
-"""
 if __name__ == "__main__":
   # app.run(debug=False, host="0.0.0.0", port=81)
   app.run(debug=True, host='localhost')
-"""
