@@ -1,16 +1,10 @@
-import sqlite3
-from flask import Flask, render_template, request, url_for, redirect, g
-from data.papers import get_papers_data
+from flask import Flask, render_template, request, url_for, redirect
 from data.call_meta_paper import PaperCaller
+from urllib import parse
 
 app = Flask(__name__)
 pc = PaperCaller()
 
-
-def get_db():
-    if 'db' not in g:
-         g.db = sqlite3.connect('TestDB.db')
-    return g.db
 
 @app.route('/', methods=["GET", "POST"])
 def index():
@@ -32,16 +26,16 @@ def root(keyword):
     elif "paperId" in request.form.keys():
       paperId = request.form["paperId"]
       return redirect(url_for("papers" , paperId = paperId))
-
-  num_get=1000
-  papers_data = pc.get_metainfo_from_keyword(keyword, num_get, num_get)
+  
+  keyword = parse.unquote(keyword)
+  papers_data = pc.get_papers_by_keyword(keyword)
   
   if len(papers_data) != 0:
     keys = papers_data[0].keys()
     return render_template("root_nontable.html", n=len(keys), papers=papers_data, keys=keys, keyword=keyword)
     # return render_template("root.html", n=len(keys), papers=papers_data, keys=keys)
   else:
-    return render_template("notfound.html")
+    return render_template("notfound.html", keyword=keyword)
 
 @app.route("/papers/<string:paperId>", methods=["GET", "POST"])
 def papers(paperId):
@@ -50,12 +44,10 @@ def papers(paperId):
 
     return redirect(url_for("root" , keyword = keyword))
   
-  num_get=1000
   paperIds=paperId.split('-')
-  for id in paperIds:
-    print(id)
-  targ_paper=paperIds[-1]
-  main_data, papers_data = pc.get_metainfo_from_paperId(targ_paper, num_get, num_get)
+  main_paper_id=paperIds[-1]
+  main_data = pc.get_paper_by_paperId(main_paper_id)
+  papers_data = pc.get_reference_papers_by_main_paper_id(main_paper_id)
 
   if len(papers_data) != 0:
     keys = papers_data[0].keys()
@@ -80,7 +72,7 @@ def result(paperId):
   paperIds=paperId.split('-')
   # for id in paperIds:
   #   print(id)
-  papers_data = pc.get_metainfo_from_paperIds(paperIds)
+  papers_data = pc.get_papers_by_paperIds(paperIds)
 
   # return render_template("result_nontable.html", papers=papers_data)
   return render_template("result.html", papers=papers_data)
