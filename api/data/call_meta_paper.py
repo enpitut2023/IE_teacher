@@ -59,7 +59,7 @@ class PaperCaller:
     def get_paper_by_paperId(self, paperId)->dict:
         # 論文データ取得用のパラメータ設定
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
-        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
+        fields = ('title', 'year', 'citationCount',"abstract", "tldr")
         params = {
             "fields": ','.join(fields)
         }
@@ -67,8 +67,8 @@ class PaperCaller:
         # 論文データ取得
         r = requests.post(endpoint, params=params, json={"ids": [paperId]})
         r = '{"data": ' + r.text[:-1] + "}"
-        r_dict = self.cut_none(json.loads(r)["data"]) # リスト型
-
+        r_dict = json.loads(r) #["data"] # リスト型
+        r_dict = r_dict["data"]
         # 結果を確認
         if not self.check_api_result(r_dict):
             return {}
@@ -258,6 +258,9 @@ class PaperCaller:
         return paperIDs
     
     def cut_none(self, list_dict):
+        if (type(list_dict) != type([])):
+            print("ERROR: cut_none(list_dict) list_dict is not list")
+            return []
         list_dict = list(filter(None, list_dict))
 
         return list_dict

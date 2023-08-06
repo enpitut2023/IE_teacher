@@ -85,4 +85,4 @@ Replit上でhtmlを表示する場合はhost="0.0.0.0",port=81を
 """
 if __name__ == "__main__":
   # app.run(debug=False, host="0.0.0.0", port=81)
-  app.run(debug=True, host='localhost')
+  app.run(debug=False, host='localhost')
