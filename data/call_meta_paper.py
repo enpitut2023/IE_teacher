@@ -58,7 +58,7 @@ class PaperCaller:
 
     #getメソッドで論文1個を取得するメソッド
     def get_paper_by_paperId(self, paperID)->dict:
-        endpoint = "https://api.semanticscholar.org/graph/v1/paper/{}?fields={}".format(paperID, "title,year,citationCount,tldr")
+        endpoint = "https://api.semanticscholar.org/graph/v1/paper/{}?fields={}".format(paperID, "title,year,citationCount,tldr,url")
         r=requests.get(endpoint)
         r = '{"data": ' + r.text.replace("\n", "") + "}"
         r_dict = json.loads(r)["data"]
@@ -74,7 +74,7 @@ class PaperCaller:
     def get_papers_by_paperIds(self, paperIDs, limit=500)->list:
         # 論文データ取得用のパラメータ設定
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
-        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr", "url")
         params = {
             "fields": ','.join(fields),
         }
