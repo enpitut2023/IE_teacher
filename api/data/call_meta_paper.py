@@ -55,7 +55,7 @@ class PaperCaller:
             dt.pop("authors")
             
         return data
-
+      
     #getメソッドで論文1個を取得するメソッド
     def get_paper_by_paperId(self, paperID)->dict:
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/{}?fields={}".format(paperID, "title,year,citationCount,tldr,url")
@@ -245,6 +245,7 @@ class PaperCaller:
 
         return paperIDs
     
+
     def _cut_none(self, list_dict):
         list_dict = list(filter(None, list_dict))
 
