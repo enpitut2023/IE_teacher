@@ -3,6 +3,7 @@
 <html lang="ja">
     <link rel="stylesheet" href="/static/css/style.css">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons/css/academicons.min.css">
     <head>
         <title>情報工学先生</title>
         <meta charset="utf-8"/>
@@ -13,13 +14,11 @@
                 <a class="header-img" href="{{ url_for('index') }}">
                     <img src="\static\figures\header_logo.jpg" alt="情報工学先生">
                 </a>
-                <form class="form-inline" method="post">
+                <form class="form-header" method="post">
                     <div class="form-group">
-                        <label class="sr-only" for="screen_name"></label>
-                        <div class="input-group mb-3">
-                            <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
-                            <input type="submit"  value="&#xf002" class="search-button">
-                        </div>
+                        <label for="screen_name"></label>
+                        <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
+                        <input type="submit"  value="&#xf002" class="search-button">
                     </div>
                 </form>
             </div>
@@ -40,7 +39,11 @@
                     {% for paper in papers %}
                     <tr>
                         <td>
-                            <a>{{ paper["title"] }}</a>
+                            {{ paper["title"] }}
+                            <a class="seman_logo_container" href='{{ paper["url"] }}' target="_blank">
+                                <i class="ai ai-semantic-scholar ai-1x">Semantic Scholar</i>
+                                <!-- <img src="https://assets-global.website-files.com/605236bb767e9a5bb229c63c/605274dd4af9b0ca8ac84182_s2-logo.svg" loading="lazy" height="20" alt="Semantic Scholar" class="link_seman_logo"> -->
+                            </a>
                         </td>
                         <td>
                             {{ paper["tldr"] }}
@@ -55,6 +58,9 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="feedback-container">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSe9_7O1elUE_3yFz5InsYa9R8sRgS-soVp4E1Jp-iYQYsAdnQ/viewform?usp=sf_link">フィードバックはこちら</a>
+            </div>
         </div>
     </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" style="height: 100%">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/style.css">
@@ -8,20 +8,21 @@
         <title>情報工学先生</title>
         <meta charset="utf-8"/>
     </head>
-    <body>
+    <body style="height: 100%">
         <div class="index-container">
             <img src="\static\figures\header_logo.jpg" alt="情報工学先生">
         </div>
         <div class="form-container">
-            <form class="form-inline" method="post">
+            <form method="post">
                 <div class="form-group">
-                    <label class="sr-only" for="screen_name"></label>
-                    <div class="input-group mb-3">
+                    <label for="screen_name"></label>
                     <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
                     <input type="submit"  value="&#xf002" class="search-button">
-                    </div>
                 </div>
             </form>
+        </div>
+        <div class="feedback-container">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe9_7O1elUE_3yFz5InsYa9R8sRgS-soVp4E1Jp-iYQYsAdnQ/viewform?usp=sf_link">フィードバックはこちら</a>
         </div>
     </body>
 </html>

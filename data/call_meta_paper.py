@@ -5,186 +5,146 @@ https://api.semanticscholar.org/api-docs/
 
 import requests
 import json
-# from data.extract_by_rake import Rake_Keyword_Extractor
+
 
 class PaperCaller:
     def __init__(self):
-        self.fields = ('title', 'year', 'citationCount','authors',"abstract", "tldr")
+        self.fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
 
-    def empty_rdata(self):
-        return {"title":"error","abstract":"may_be_error","citationCount":-1}, [{"title":"error","abstract":"may_be_error","citationCount":-1}]
-    
-    def get_metainfo_from_keyword(self, keyword, num_get, num_extract)->dict:
-        def check_api_result(r_dict):
-            if "message" in r_dict.keys() or "error" in r_dict.keys():
+    def check_api_result(self, data):
+        if type(data) == dict:
+            try:
+                if "total" in data.keys():
+                    if data["total"] == 0:
+                        return False
+                if "message" in data.keys() or "error" in data.keys():
+                    return False
+            except:
                 return False
-            if r_dict['total']==0:
+        elif type(data) == list:
+            if len(data) == 0:
                 return False
-            return True
-        num_get_max = 100
-        if num_get > num_get_max:
-            num_get = num_get_max
-        if num_get < num_extract:
-            num_extract = num_get
-        endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
-        keyword = keyword
-        params = {
-            'query': keyword,
-            'fields': ','.join(self.fields),
-            'limit': num_get
-        }
-        r = requests.get(url=endpoint, params=params)
-        r_dict = json.loads(r.text)
-        if check_api_result(r_dict)==False:
-            return []
-        data = r_dict['data']
-
-        if len(data) < num_extract:
-            num_extract = len(data)
-
-        self.extract_names(data)
-        self.extract_tldr(data)
-        
-        for dt in data:
-            dt.pop("abstract")
-            dt.pop("authors")
-            
-        return data[0:num_extract]
-
-    def get_metainfo_from_paperId(self, paperId, num_get, num_extract)->dict:
-        def check_api_result(r_dict):
-            if "message" in r_dict.keys() or "error" in r_dict.keys():
-                return False
-            if r_dict['total']==0:
-                return False
-            return True
-        
-        num_get_max = 100
-        if num_get > num_get_max:
-            num_get = num_get_max
-        if num_get < num_extract:
-            num_extract = num_get
-        
-        endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
-        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
-
-        params = {
-            "fields": ','.join(fields)
-        }
-
-        r = requests.post(endpoint, params=params, json={"ids": [paperId]})
-        r = '{"data": ' + r.text[:-1] + "}"
-        r_dict = json.loads(r)["data"]
-        if len(r_dict) == 0:
-            main_data = []
-        main_data = r_dict
-        self.extract_tldr(main_data)
-
-        data = self.get_main_paper_reference_dict(paperId)
-        if len(data) == 0:
-            return main_data[0], []
-        
-        if len(data) < num_extract:
-            num_extract = len(data)
-
-        paperIds = self.extract_paperIds(data)
-        
-        if len(paperIds) == 0:
-            return main_data[0], []
-
-        data = self.get_metainfo_from_paperIds(paperIds[:num_extract])
-        self.culcurate_importance(data, 0)
-        data = self.sort_metainfo_by_importance(data)
-
-        self.extract_names(data)
-        self.extract_tldr(data)
-        
-        for dt in data:
-            dt.pop("abstract")
-            dt.pop("authors")
-            
-        return main_data[0],  data[0:num_extract]
- 
-    def get_metainfo_from_title(self,name_of_paper,num_get,num_extract)->dict:
-        """ 
-        入力論文タイトルでAPIを叩き、検索する。検索した中から完全一致する論文名を探しだし、その参考文献メタデータのリストを返す。
-        Args:
-            name_of_paper(str):入力論文タイトル
-            num_get(int):検索件数を指定
-            num_extract(int):検索結果から抽出する論文数
-        Return:
-            main_paper(dict):入力論文に関するメタデータ
-            data(list<-dict):入力論文の参考文献メタデータのリスト、ソートされている
-        """
-        def check_api_result(r_dict):
-            if "message" in r_dict.keys() or "error" in r_dict.keys():
-                return False
-            if r_dict['total']==0:
-                return False
-            return True
-            
-        num_get_max = 100
-        if num_get > num_get_max:
-            num_get = num_get_max
-        if num_get < num_extract:
-            num_extract = num_get
-
-        endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
-        keyword = name_of_paper
-        params = {
-            'query': keyword,
-            'fields': ','.join(self.fields),
-            'limit': num_get
-        }
-        r = requests.get(url=endpoint, params=params)
-        
-        r_dict = json.loads(r.text)
-        if check_api_result(r_dict)==False:
-            return self.empty_rdata()
-        
-        data = r_dict['data']
-
-        if self.keyword_or_title(keyword, data):
-            # タイトルが入力された場合
-            main_paper = self.get_main_paper(keyword, data)
-            main_paper_id = main_paper.pop("paperId")
-            data = self.get_main_paper_reference_dict(main_paper_id)
         else:
-            main_paper = []
+            return False
+        
+        return True
+    
+    def get_papers_by_keyword(self, keyword, limit=100)->list:
+        # 論文データ取得用のパラメータ設定
+        endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
+        params = {
+            'query': keyword,
+            'fields': ','.join(self.fields),
+            'limit': limit
+        }
+        
+        # 論文データ取得
+        r = requests.get(url=endpoint, params=params)
+        r_dict = json.loads(r.text)
 
-        if len(data) < num_extract:
-            num_extract = len(data)
+        # 結果を確認
+        if not self.check_api_result(r_dict):
+            return []
+        data = self._cut_none(r_dict['data'])
 
-        self.culcurate_importance(data, 0)
-        data = self.sort_metainfo_by_importance(data)
-        paperIds = self.extract_paperIds(data)
-        data = self.get_metainfo_from_paperIds(paperIds[:num_extract])
-        self.culcurate_importance(data, 0)
-        data = self.sort_metainfo_by_importance(data)
-
-        self.extract_names(data)
-        self.extract_tldr(data)
+        self._extract_author_names(data)
+        self._extract_tldr(data)
         
         for dt in data:
-            dt.pop("paperId")
             dt.pop("abstract")
             dt.pop("authors")
             
-        return data[0:num_extract]
+        return data
+      
+    #getメソッドで論文1個を取得するメソッド
+    def get_paper_by_paperId(self, paperID)->dict:
+        endpoint = "https://api.semanticscholar.org/graph/v1/paper/{}?fields={}".format(paperID, "title,year,citationCount,tldr,url")
+        r=requests.get(endpoint)
+        r = '{"data": ' + r.text.replace("\n", "") + "}"
+        r_dict = json.loads(r)["data"]
+
+        if not self.check_api_result(r_dict):
+            return {}
+        
+        papers = [r_dict]
+        self._extract_tldr(papers)
+        
+        return papers[0]
     
-    def sort_metainfo(self, list_dict):
-        """ 
-        論文メタデータのリストをcitationCountの降順にソートして返す関数
-        Args:
-            list_dict(list<-dict):論文メタデータの辞書のリスト
-        Return:
-            list_dict_sorted(list<-dict):ソートされた論文メタデータの辞書のリスト
-        """
-        list_dict_sorted = sorted(list_dict,
-                                   key=lambda x:x['citationCount'],reverse=True)
-        return list_dict_sorted
+    def get_papers_by_paperIds(self, paperIDs, limit=500)->list:
+        # 論文データ取得用のパラメータ設定
+        endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
+        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr", "url")
+        params = {
+            "fields": ','.join(fields),
+        }
+
+        paperIDs = paperIDs[:limit]
+
+        # 論文データ取得
+        print("papers取得")
+        r = requests.post(endpoint, params=params, json={"ids": paperIDs})
+        r = '{"data": ' + r.text.replace("\n", "") + "}"
+        r_dict = json.loads(r)["data"]
+
+        # 結果を確認
+        if not self.check_api_result(r_dict):
+            print("ERROR!")
+            return []
+        
+        r_dict = self._cut_none(r_dict)
+        self._extract_tldr(r_dict)
+
+        return r_dict
     
-    def sort_metainfo_by_importance(self, list_dict):
+    def get_papers_by_paperIds_using_for_loop(self, paperIDs, limit=10):
+        papers=[]
+        for paperID in paperIDs[:limit]:
+            res=self.get_paper_by_paperId(paperID)
+            papers.append(res)
+
+        papers = self._cut_none(papers)
+        self._extract_tldr(papers)
+
+        return papers
+    
+    def get_reference_papers_ids_by_main_paper_id(self, paperID, limit=1000):
+        endpoint = 'https://api.semanticscholar.org/graph/v1/paper/{}/references'.format(paperID)
+        fields = ("paperId",)
+        params = {
+            'fields': ','.join(fields),
+            "limit": limit
+        }
+        
+        # 論文データ取得
+        r = requests.get(url=endpoint, params=params)
+        r_dict = json.loads(r.text)
+
+        # 結果を確認
+        if not self.check_api_result(r_dict):
+            return []
+        
+        # データを取り出す
+        r_dict = self._cut_none(r_dict["data"])
+        
+        reference_papers = []
+        for paper in r_dict:
+            reference_papers.append(paper["citedPaper"])
+
+        # 参考文献0だったら空リストを返す
+        if len(reference_papers) == 0:
+            return []
+
+        # paperIdsのリストを受け取る
+        paperIds = self._extract_paperIds(reference_papers)
+
+        # うまく見つけられなかったら空リストを返す
+        if len(paperIds) == 0:
+            return []
+        
+        return paperIds
+
+    def _sort_papers_by_importance(self, list_dict):
         """ 
         論文メタデータのリストをimportanceの降順にソートして返す関数
         Args:
@@ -196,7 +156,7 @@ class PaperCaller:
                                    key=lambda x:x['importance'],reverse=True)
         return list_dict_sorted
 
-    def culcurate_importance(self, list_dict, alpha):
+    def _culcurate_importance(self, list_dict, alpha):
         """
         各論文データに対して、重要度を計算し辞書に登録
         importance = alpha * CitationCount + (1 - alpha) * Yearで計算
@@ -248,7 +208,7 @@ class PaperCaller:
             i = alpha * c + (1 - alpha) * y
             dt['importance'] = i
 
-    def extract_names(self, list_dict):
+    def _extract_author_names(self, list_dict):
         """
         論文データの著者名のdictををStringに変換
         Args:
@@ -266,17 +226,17 @@ class PaperCaller:
                 string = None
             dt['authors'] = string
 
-    def extract_tldr(self, list_dict):
+    def _extract_tldr(self, list_dict):
         for dt in list_dict:
             if dt["tldr"] != None:
-                if type(dt["tldr"]) == type({}):
+                if type(dt["tldr"]) == dict:
                     tldr = dt["tldr"]["text"]
                 else:
                     tldr = dt["tldr"]
-            
+        
                 dt["tldr"] = tldr
 
-    def extract_paperIds(self, list_dict):
+    def _extract_paperIds(self, list_dict):
         paperIDs = []
         for paper in list_dict:
             if paper["paperId"] == None:
@@ -284,91 +244,14 @@ class PaperCaller:
             paperIDs.append(paper["paperId"])
 
         return paperIDs
-
-    def get_main_paper(self, title, list_dict):
-        """ 
-        論文メタデータの中から、入力論文タイトルを探す。
-        Args:
-            title(str):入力された論文タイトル
-            list_dict(list<-dict):論文メタデータの辞書のリスト
-        Return:
-            paper(dict):入力論文のメタデータを返す。見つからなかった場合は-1を返す。
-        """
-        title = title.replace(" ", "").lower()
-        for paper in list_dict:
-            if title == paper["title"].replace(" ", "").lower():
-                break
-        return paper
     
-    def keyword_or_title(self, title, list_dict):
-        title = title.replace(" ", "").lower()
-        for paper in list_dict:
-            if title == paper["title"].replace(" ", "").lower():
-                return True
-        
-        # Not Found
-        return False
-    
-    def get_main_paper_reference_dict(self, paperID):
-        """ 
-        paperIDの参考文献のメタデータを返す
-        Args:
-            paperID(?):検索論文のID
-        Return:
-            result(list<-dict):参考文献のメタデータ
-        """
-        endpoint = 'https://api.semanticscholar.org/graph/v1/paper/{}/references'.format(paperID)
-        #fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
-        fields = ('title', 'year', 'citationCount', 'authors', "abstract")
-        params = {
-            'fields': ','.join(fields),
-            "limit": 1000
-        }
-        
-        r = requests.get(url=endpoint, params=params)
-        r_dict = json.loads(r.text)["data"]
-        
-        result = []
-        for paper in r_dict:
-            result.append(paper["citedPaper"])
-            
-        return result
-    """ 
-    def get_papers_from_rake(self,abst,num_get=100,num_keywords=5):
-        rake_ext=Rake_Keyword_Extractor()
-        keywords=rake_ext.get_keywords(abst,num_keywords)
-        print(keywords)
-        ret=[]
-        #各keywordで検索。上位1件を追加。
-        for keyword in keywords:
-            endpoint = 'https://api.semanticscholar.org/graph/v1/paper/search'
-            params = {
-                'query': keyword,
-                'fields': ','.join(self.fields),
-                'limit': num_get
-            }
-            r = requests.get(url=endpoint, params=params)
-            r_dict = json.loads(r.text)
-            data = r_dict['data']
-            ret=ret+data[0:num_get]
-        return ret 
-    """
-    
-    def get_metainfo_from_paperIds(self, paperIDs):
-        endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
-        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr")
 
-        params = {
-            "fields": ','.join(fields)
-        }
+    def _cut_none(self, list_dict):
+        list_dict = list(filter(None, list_dict))
 
-        r = requests.post(endpoint, params=params, json={"ids": paperIDs})
-        r = '{"data": ' + r.text[:-1] + "}"
-        r_dict = json.loads(r)["data"]
-        self.extract_tldr(r_dict)
-
-        return r_dict
+        return list_dict
     
+"""
 if __name__ == "__main__":
     pc=PaperCaller()
     input_txt = input("keyを入力:")
@@ -376,4 +259,4 @@ if __name__ == "__main__":
     data = pc.get_metainfo_from_paperId(data[0]['paperId'], 10, 10)
     for d in data:
         print(d)
-
+"""
