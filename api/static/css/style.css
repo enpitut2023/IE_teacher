@@ -20,7 +20,7 @@ tfoot {
 
 .c-form-text {
     height: 2.4em;
-    width: 80%;
+    width: 60%;
     padding: 0 16px;
     border-radius: 4px;
     border: none;
@@ -28,6 +28,7 @@ tfoot {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
+    margin: 1%;
 }
 
 .c-form-text:focus {
@@ -49,6 +50,7 @@ tfoot {
     height: 1.9em;
     display: inline-block;
     vertical-align: middle;
+    margin: 1%;
 }
 
 .finish-button {
@@ -68,56 +70,6 @@ tfoot {
     margin-left: 5px;
 }
 
-.form-inline{
-    width: 60%
-}
-
-.input-group {
-    align-content: center;
-} 
-
-header {
-    background-color: #333; /* ヘッダーの背景色を設定 */
-    color: #fff; /* テキストの色を設定 */
-    width: 100%;
-    padding: 10px; /* ヘッダーの余白を設定 */
-    position: fixed;
-    top: 0px;
-    left: 0px;
-}
-
-.header-container {
-    display: flex;
-    justify-content: flex-start; /* 要素を左詰めに配置する */
-    align-items: center; /* 要素を垂直方向に中央に配置する */
-}
-
-.header-container img{
-    width: 200px;
-    border: 1px solid black;
-    margin-right: 30px;
-    margin-bottom: 0px;
-}
-
-.h1_head{
-    margin: 0px;
-}
-.explain{
-    color: #7e7e7e;
-    margin-top: 0px;
-    margin-left: 60px;
-}
-
-.papers_content{
-    margin-top: 150px;
-}
-.root_content{
-    margin-top: 150px;
-}
-.result_content{
-    margin-top: 150px;
-}
-
 /* Flexコンテナを作成して子要素を横に並べる */
 .index-container {
     align-items: center; /* 垂直方向に中央寄せ */
@@ -135,13 +87,72 @@ header {
 }
 
 .form-container {
-    align-items: center; /* 垂直方向に中央寄せ */
-    width: 95%;
-    height: 65%;
-    display: flex;
-    justify-content: center;
+    width: 90%;
+    height: 20%;
+    /* display: flex;
+    justify-content: center; */
     margin-top: 2%;
     margin-left: 5%;
+    margin-right: 5%;
+}
+
+.form-group{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    /* align-content: center; */
+}
+
+
+.feedback-container {
+    width: 90%;
+    text-align: right;
+    margin: 5%;
+}
+
+header {
+    background-color: #333; /* ヘッダーの背景色を設定 */
+    color: #fff; /* テキストの色を設定 */
+    width: 100%;
+    padding: 10px; /* ヘッダーの余白を設定 */
+    position: fixed;
+    top: 0px;
+    left: 0px;
+}
+
+.header-container {
+    display: flex;
+    /* justify-content: flex-start; 要素を左詰めに配置する */
+    width: 100%;
+    align-items: center; /*要素を垂直方向に中央に配置する*/
+}
+
+.header-container img{
+    width: 200px;
+    border: 1px solid black;
+    margin-right: 30px;
+    margin-bottom: 0px;
+}
+
+.h1_head{
+    margin: 0px;
+}
+
+.explain{
+    color: #7e7e7e;
+    margin-top: 0px;
+    margin-left: 60px;
+}
+
+.papers_content{
+    margin-top: 150px;
+}
+.root_content{
+    margin-top: 150px;
+}
+.result_content{
+    margin-top: 150px;
 }
 
 .logo {
