@@ -163,6 +163,20 @@ header {
     height: 50px; /* ロゴの高さを設定 */
 }
 
+.link_seman_logo img{
+    width: 100%;
+    height: auto;
+}
+
+.seman_logo_container{
+    border: 1px solid #fff;
+    background-color: #fff;
+}
+
+.seman_logo_container:hover{
+    border: 1px solid #3879D9;
+}
+
 .main_table {
     margin-bottom: 30px;
     margin-left: 60px;
