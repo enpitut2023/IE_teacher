@@ -3,7 +3,7 @@
 「理工情報生命学術院（仮）」  
 ### サービス名
 「情報工学先生」  
-https://ieteacher-2--miura-code.repl.co/  
+https://ieteacher--rikojoho-kari.repl.co/
 ### メンバーリスト  
 土居亮斗  
 赤田真由  
