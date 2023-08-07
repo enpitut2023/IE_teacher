@@ -14,7 +14,7 @@
                 <a class="header-img" href="{{ url_for('index') }}">
                     <img src="\static\figures\header_logo.jpg" alt="情報工学先生">
                 </a>
-                <form method="post">
+                <form class="form-header" method="post">
                     <div class="form-group">
                         <label for="screen_name"></label>
                         <input id="keyword" name="keyword" placeholder="論文タイトルかキーワードを入力してください。" type="text" class="c-form-text">
@@ -58,6 +58,9 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="feedback-container">
+                <a href="https://discord.com/channels/1096256981192425482/1136249755287162970/1136249761977081877">お問い合わせはこちら</a>
+            </div>
         </div>
     </body>
 </html>

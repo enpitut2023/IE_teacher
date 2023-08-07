@@ -80,12 +80,6 @@ tfoot {
     margin-top: 3%;
 }
 
-.index-container img{
-    width: 50%;
-    height: auto;
-    margin-right: 0px;
-}
-
 .form-container {
     width: 90%;
     height: 20%;
@@ -96,6 +90,10 @@ tfoot {
     margin-right: 5%;
 }
 
+.form-header {
+    width: 50%;
+}
+
 .form-group{
     width: 100%;
     display: flex;
@@ -103,7 +101,6 @@ tfoot {
     margin: 0;
     /* align-content: center; */
 }
-
 
 .feedback-container {
     width: 90%;
@@ -128,11 +125,15 @@ header {
     align-items: center; /*要素を垂直方向に中央に配置する*/
 }
 
-.header-container img{
-    width: 200px;
+.header-img{
+    width: 20%;
     border: 1px solid black;
-    margin-right: 30px;
     margin-bottom: 0px;
+}
+
+.header-img img{
+    width: 100%;
+    height: auto;
 }
 
 .h1_head{
@@ -163,14 +164,12 @@ header {
     height: 50px; /* ロゴの高さを設定 */
 }
 
-.link_seman_logo img{
-    width: 100%;
-    height: auto;
-}
-
 .seman_logo_container{
     border: 1px solid #fff;
     background-color: #fff;
+    display: inline-block;
+    padding: 3px;
+    border-radius: 10%;
 }
 
 .seman_logo_container:hover{
