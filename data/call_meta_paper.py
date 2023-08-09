@@ -77,9 +77,8 @@ class PaperCaller:
         }
         
         # 論文データ取得
-        r = requests.get(url=endpoint, params=params)
+        r = requests.get(url=endpoint, params=params, headers={"x-api-key": S2_API_KEY})
         r_dict = json.loads(r.text)
-        print(r_dict)
 
         # 結果を確認
         if not self.check_api_result(r_dict):
@@ -98,7 +97,7 @@ class PaperCaller:
     #getメソッドで論文1個を取得するメソッド
     def get_paper_by_paperId(self, paperID)->dict:
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/{}?fields={}".format(paperID, "title,year,citationCount,tldr,url")
-        r=requests.get(endpoint)
+        r=requests.get(endpoint, headers={"x-api-key": S2_API_KEY})
         r = '{"data": ' + r.text.replace("\n", "") + "}"
         r_dict = json.loads(r)["data"]
 
@@ -184,7 +183,7 @@ class PaperCaller:
         }
         
         # 論文データ取得
-        r = requests.get(url=endpoint, params=params)
+        r = requests.get(url=endpoint, params=params, headers={"x-api-key": S2_API_KEY})
         r_dict = json.loads(r.text)
 
         # 結果を確認
