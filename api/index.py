@@ -64,8 +64,8 @@ def papers(paperId):
 
   main_data = pc.get_paper_by_paperId(main_paper_id)
   reference_paperIds = pc.get_reference_papers_ids_by_main_paper_id(main_paper_id, REFERENCE_PAPERS_GET_LIMIT)
-  # papers_data = pc.get_papers_by_paperIds(paperIDs=reference_paperIds, limit=PAPER_IDS_POST_LIMIT)
-  papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIDs=reference_paperIds, limit=GET_LIMIT_USING_FOR_LOOP)
+  papers_data = pc.get_papers_by_paperIds(paperIDs=reference_paperIds, limit=PAPER_IDS_POST_LIMIT)
+  # papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIDs=reference_paperIds, limit=GET_LIMIT_USING_FOR_LOOP)
 
   """
   POSTが死んだら使う
@@ -90,8 +90,8 @@ def result(paperId):
   
   paperIds=paperId.split('-')
 
-  # papers_data=pc.get_papers_by_paperIds(paperIds, PAPER_IDS_POST_LIMIT)
-  papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIDs=paperIds, limit=GET_LIMIT_USING_FOR_LOOP)
+  papers_data=pc.get_papers_by_paperIds(paperIds, PAPER_IDS_POST_LIMIT)
+  # papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIDs=paperIds, limit=GET_LIMIT_USING_FOR_LOOP)
 
   """
   POSTが死んだら使う
