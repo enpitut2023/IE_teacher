@@ -5,7 +5,45 @@ https://api.semanticscholar.org/api-docs/
 
 import requests
 import json
+from requests import Session
+import os
+from typing import Generator, TypeVar
 
+S2_API_KEY = os.environ.get('S2_API_KEY', '')
+
+T = TypeVar('T')
+
+
+def batched(items: list[T], batch_size: int) -> list[T]:
+    return [items[i:i + batch_size] for i in range(0, len(items), batch_size)]
+
+def get_paper_batch(session: Session, ids: list[str], fields: str = 'paperId,title', **kwargs) -> list[dict]:
+    params = {
+        'fields': fields,
+        **kwargs,
+    }
+    headers = {
+        'x-api-key': S2_API_KEY,
+    }
+    body = {
+        'ids': ids,
+    }
+
+    # https://api.semanticscholar.org/api-docs/graph#tag/Paper-Data/operation/post_graph_get_papers
+    with session.post(url='https://api.semanticscholar.org/graph/v1/paper/batch',
+                    params=params,
+                    headers=headers,
+                    json=body) as response:
+        
+        response.raise_for_status()
+        return response.json()
+    
+def get_papers(ids: list[str], batch_size: int = 100, **kwargs) -> Generator[dict, None, None]:
+    # use a session to reuse the same TCP connection
+    with Session() as session:
+        # take advantage of S2 batch paper endpoint
+        for ids_batch in batched(ids, batch_size=batch_size):
+            yield from get_paper_batch(session, ids_batch, **kwargs)
 
 class PaperCaller:
     def __init__(self):
@@ -39,7 +77,7 @@ class PaperCaller:
         }
         
         # 論文データ取得
-        r = requests.get(url=endpoint, params=params)
+        r = requests.get(url=endpoint, params=params, headers={"x-api-key": S2_API_KEY})
         r_dict = json.loads(r.text)
 
         # 結果を確認
@@ -59,7 +97,7 @@ class PaperCaller:
     #getメソッドで論文1個を取得するメソッド
     def get_paper_by_paperId(self, paperID)->dict:
         endpoint = "https://api.semanticscholar.org/graph/v1/paper/{}?fields={}".format(paperID, "title,year,citationCount,tldr,url")
-        r=requests.get(endpoint)
+        r=requests.get(endpoint, headers={"x-api-key": S2_API_KEY})
         r = '{"data": ' + r.text.replace("\n", "") + "}"
         r_dict = json.loads(r)["data"]
 
@@ -73,19 +111,18 @@ class PaperCaller:
     
     def get_papers_by_paperIds(self, paperIDs, limit=500)->list:
         # 論文データ取得用のパラメータ設定
-        endpoint = "https://api.semanticscholar.org/graph/v1/paper/batch"
-        fields = ('title', 'year', 'citationCount', 'authors', "abstract", "tldr", "url")
-        params = {
-            "fields": ','.join(fields),
-        }
-
+        fields = 'title,year,citationCount,authors,abstract,tldr,url'
         paperIDs = paperIDs[:limit]
 
+        r_dict = []
         # 論文データ取得
         print("papers取得")
-        r = requests.post(endpoint, params=params, json={"ids": paperIDs})
-        r = '{"data": ' + r.text.replace("\n", "") + "}"
-        r_dict = json.loads(r)["data"]
+        for paper in get_papers(paperIDs, fields=fields):
+            if not paper:
+                continue
+            
+            r_dict.append(paper)
+
 
         # 結果を確認
         if not self.check_api_result(r_dict):
@@ -93,6 +130,35 @@ class PaperCaller:
             return []
         
         r_dict = self._cut_none(r_dict)
+        print(len(r_dict))
+        self._culcurate_importance(r_dict, alpha=0.0)
+        self._extract_tldr(r_dict)
+
+        return r_dict
+    
+    def get_papers_by_paperIds_for_result(self, paperIDs, limit=500)->list:
+        # 論文データ取得用のパラメータ設定
+        fields = 'title,year,citationCount,authors,abstract,tldr,url,journal,venue,fieldsOfStudy'
+        paperIDs = paperIDs[:limit]
+
+        r_dict = []
+        # 論文データ取得
+        print("papers取得")
+        for paper in get_papers(paperIDs, fields=fields):
+            if not paper:
+                continue
+            
+            r_dict.append(paper)
+
+
+        # 結果を確認
+        if not self.check_api_result(r_dict):
+            print("ERROR!")
+            return []
+        
+        r_dict = self._cut_none(r_dict)
+        print(len(r_dict))
+        self._culcurate_importance(r_dict, alpha=0.0)
         self._extract_tldr(r_dict)
 
         return r_dict
@@ -117,7 +183,7 @@ class PaperCaller:
         }
         
         # 論文データ取得
-        r = requests.get(url=endpoint, params=params)
+        r = requests.get(url=endpoint, params=params, headers={"x-api-key": S2_API_KEY})
         r_dict = json.loads(r.text)
 
         # 結果を確認
