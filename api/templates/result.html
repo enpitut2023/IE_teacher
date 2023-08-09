@@ -33,6 +33,8 @@
                         <th colspan="1">tldr</th>
                         <th colspan="1">year</th>
                         <th colspan="1">citationCount</th>
+                        <th colspan="1">journal/conference</th>
+                        <th colspan="1">fields</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,6 +55,12 @@
                         </td>
                         <td>
                             {{ paper["citationCount"] }}
+                        </td>
+                        <td>
+                            {{ paper["venue"] }}
+                        </td>
+                        <td>
+                            {{ paper["fieldsOfStudy"] }}
                         </td>
                     </tr>
                     {% endfor %}
