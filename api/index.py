@@ -90,7 +90,7 @@ def result(paperId):
   
   paperIds=paperId.split('-')
 
-  papers_data=pc.get_papers_by_paperIds(paperIds, PAPER_IDS_POST_LIMIT)
+  papers_data=pc.get_papers_by_paperIds_for_result(paperIds, PAPER_IDS_POST_LIMIT)
   # papers_data=pc.get_papers_by_paperIds_using_for_loop(paperIDs=paperIds, limit=GET_LIMIT_USING_FOR_LOOP)
 
   """

@@ -79,6 +79,7 @@ class PaperCaller:
         # 論文データ取得
         r = requests.get(url=endpoint, params=params)
         r_dict = json.loads(r.text)
+        print(r_dict)
 
         # 結果を確認
         if not self.check_api_result(r_dict):
@@ -112,6 +113,33 @@ class PaperCaller:
     def get_papers_by_paperIds(self, paperIDs, limit=500)->list:
         # 論文データ取得用のパラメータ設定
         fields = 'title,year,citationCount,authors,abstract,tldr,url'
+        paperIDs = paperIDs[:limit]
+
+        r_dict = []
+        # 論文データ取得
+        print("papers取得")
+        for paper in get_papers(paperIDs, fields=fields):
+            if not paper:
+                continue
+            
+            r_dict.append(paper)
+
+
+        # 結果を確認
+        if not self.check_api_result(r_dict):
+            print("ERROR!")
+            return []
+        
+        r_dict = self._cut_none(r_dict)
+        print(len(r_dict))
+        self._culcurate_importance(r_dict, alpha=0.0)
+        self._extract_tldr(r_dict)
+
+        return r_dict
+    
+    def get_papers_by_paperIds_for_result(self, paperIDs, limit=500)->list:
+        # 論文データ取得用のパラメータ設定
+        fields = 'title,year,citationCount,authors,abstract,tldr,url,journal,venue,fieldsOfStudy'
         paperIDs = paperIDs[:limit]
 
         r_dict = []
